@@ -1,0 +1,23 @@
+{
+  "service_name": "ticmymail-part2",
+  "environment": "dev",
+  "dedupe_root": "/config/dedupe-state",
+  "dedupe": {
+    "backend": "memory",
+    "write_attempts": 3,
+    "cache_ttl_seconds": 300,
+    "reconcile_interval_seconds": 300
+  },
+  "adls_dedupe": {
+    "connection_string": "DefaultEndpointsProtocol=https;AccountName=youraccount;AccountKey=YOURKEY;EndpointSuffix=core.windows.net",
+    "container": "ticmymail-dedupe",
+    "blob_path": "dedupe-state.json"
+  },
+  "config_version": "v1",
+  "log_level": "INFO",
+  "features": {
+    "servicenow": true,
+    "bigpanda": true,
+    "email": true
+  }
+}

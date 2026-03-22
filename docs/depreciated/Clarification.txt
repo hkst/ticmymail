@@ -1,0 +1,182 @@
+Ok lets use src/tmm.  I am ready to start the work in fixing the scaffolding. provide step guide keep it simple and clear for a experienced developers with short explanation what and why . do  not do any large formatting. should be easy for copy and run. i am attaching current structure of my local for you suggest all changes and cleanup. 
+Copilot said:
+Copilot
+
+Reasoning completed in 5 steps
+Below is a simple, copy‑and‑run step guide to fix the scaffolding using src/tmm as the package. Each step says what and why. I’ve tailored it to your current tree (you have tmm/src/app, plus sibling folders like audit, config, dedupe, intake, etc.; you also have nested .venv folders).
+Text type
+local_tree
+
+create a safety branch
+why: keep main clean while you refactor.
+
+
+
+Shell
+git switch -c chore/scaffold-src-tmm
+decide your repo root and cd into it
+why: commands must run at the repo root (folder containing .git). If .git is above the tmm folder, then your repo root is the parent; otherwise it’s tmm. From your tree, the project content sits under tmm/ (with src, tests, infra, etc.). cd there.
+Text type
+local_tree
+
+
+
+Shell
+cd tmm
+create the package folder src/tmm
+why: this becomes the single importable package (import tmm).
+
+
+
+Shell
+mkdir -p src/tmm
+move code from src/app into src/tmm
+why: drop the generic “app” layer; use the real package name.
+
+
+
+Shell
+git mv src/app/* src/tmm/ 2>/dev/null || true
+git rm -r src/app 2>/dev/null || true
+move first‑party modules under the package
+why: keep all python modules inside the package root so imports are consistent. Your tree shows src/audit, src/config, src/dedupe, src/intake, src/observability, src/routing, src/snowsync, src/threading.
+Text type
+local_tree
+
+
+
+Shell
+for d in audit config dedupe intake observability routing snowsync threading; do
+  if [ -d "src/$d" ]; then git mv "src/$d" "src/tmm/"; fi
+done
+ensure package markers
+why: guarantee package discovery works.
+
+
+
+Shell
+[ -f src/tmm/__init__.py ] || printf "" > src/tmm/__init__.py
+update imports (search/replace)
+why: replace from app... or top‑level imports with from tmm....
+
+
+
+Shell
+# dry-run review first
+git grep -nE "from\\s+app\\.|import\\s+app\\b|from\\s+(audit|config|dedupe|intake|observability|routing|snowsync|threading)\\b" -- src tests
+
+# perform safe replacements (adjust patterns as needed)
+git ls-files | xargs sed -i \
+  -e 's/from[ ]\+app\./from tmm./g' \
+  -e 's/import[ ]\+app\b/import tmm/g' \
+  -e 's/from[ ]\+audit\b/from tmm.audit/g' \
+  -e 's/from[ ]\+config\b/from tmm.config/g' \
+  -e 's/from[ ]\+dedupe\b/from tmm.dedupe/g' \
+  -e 's/from[ ]\+intake\b/from tmm.intake/g' \
+  -e 's/from[ ]\+observability\b/from tmm.observability/g' \
+  -e 's/from[ ]\+routing\b/from tmm.routing/g' \
+  -e 's/from[ ]\+snowsync\b/from tmm.snowsync/g' \
+  -e 's/from[ ]\+threading\b/from tmm.threading/g'
+
+Show more lines
+keep tests/docs/CI where they are
+why: your existing layout already separates tests/ and docs/—no need to move. You have .github/workflows already in place.
+Text type
+local_tree
+
+add minimal pyproject.toml (PEP‑621; src layout)
+why: define distribution metadata once; “install ticmymail, import tmm”.
+
+
+
+
+Shell
+# pyproject.toml (at repo root: tmm/)
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ticmymail"             # distribution name
+version = "0.1.0"
+description = "Email→incident intake and routing"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+tmm = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+Show more lines
+clean local virtualenvs from the repo
+why: you have .venv at multiple levels (.venv, tmm/.venv); they should not be committed.
+Text type
+local_tree
+
+
+
+Shell
+# ignore venvs going forward
+printf ".venv/\n*/.venv/\n__pycache__/\n.pytest_cache/\n" >> .gitignore
+
+# if any were committed, untrack them now
+git rm -r --cached .venv 2>/dev/null || true
+git rm -r --cached .pytest_cache 2>/dev/null || true
+git rm -r --cached .venv 2>/dev/null || true
+git rm -r --cached ../.venv 2>/dev/null || true
+git rm -r --cached ./**/.venv 2>/dev/null || true
+reinstall in editable mode and run tests
+why: confirm imports resolve via src/tmm.
+
+
+
+Shell
+python -m pip install -U pip build
+pip install -e .
+pytest -q
+fix any remaining imports or test paths
+why: tighten inconsistencies quickly.
+
+
+
+Shell
+git grep -n "from app\\.|import app\\b" -- src tests
+commit and push
+why: snapshot the refactor cleanly.
+
+
+
+Shell
+git add .
+git commit -m "Scaffold: move to src/tmm, update imports, PEP-621 pyproject, ignore venvs"
+git push -u origin chore/scaffold-src-tmm
+update README (one‑line banner)
+why: avoid the install/import name mismatch confusion.
+
+
+
+Markdown
+Install: pip install ticmymail
+Import:  import tmm
+optional: relocate environment configs
+why: keep runtime configs out of the package; your tree shows a top‑level config/ already—treat it as templates, not source.
+Text type
+local_tree
+notes based on your current tree:
+
+you have tmm/src/app plus sibling domain folders; those should now live under src/tmm/....
+Text type
+local_tree
+there are nested .venv directories at both top level and under tmm/; those should be ignored and not checked in.
+Text type
+local_tree
+your existing tests/{unit,integration,fixtures} can remain as is; they’ll import tmm once the move is done.
+Text type
+local_tree
+want me to generate a ready‑to‑run powershell script that does steps 3–7 safely (with backups) and prints a diff at the end?

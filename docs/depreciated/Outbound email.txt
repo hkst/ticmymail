@@ -1,0 +1,39 @@
+Outbound email
+
+Should Part‑2 send mail directly (bank mail relay/Graph send‑only) or indirectly by calling a Part‑1 “send” API? (You earlier kept mailbox details out of scope for Part‑2.) [4_tmm_tech...design_dev | Word]
+
+HT>>directly to User as payload will information 
+Note : part -1  is very passive system, pool for emails in a shared mailbox, extract payload and call part2. bulk of work is in Part2
+
+Confirm the threading fields that Part‑1 will always include: message_id and thread_id (or conversation_id) so we can set In-Reply-To/References. [4_tmm_tech...design_dev | Word]
+
+HT>> yes whatever we needed will be provided as part of payload by part1
+
+Approve using templated replies (markdown) with variables (ticket_id, owner, eta, workaround_url) + an AI fill‑in step for the free‑text section. [4_tmm_tech...design_dev | Word]
+HT>> Not clear to me what you asking
+
+BigPanda
+4) Exact operations in scope: (a) post a note with SN sys_id, (b) fetch recent similar alerts by tags/service within T hours, (c) attach correlation IDs back on SN ticket. Correct? 
+HT>> yes for now but should be adaptable based on config file 
+
+5) Auth & endpoints for BigPanda will be provided via config; any IP allowlists or proxy requirements we must respect? [4_tmm_tech...design_dev | Word]
+ServiceNow (ATLAS)
+Ht>> Yes. 
+
+6) Auth method (OAuth vs Basic) and which SN tables/APIs we must call (/api/now/table/incident, comments, attachments). Provide via config? 
+HT >>Yes 
+
+7) Any mandatory fields we must always set (e.g., assignment group defaults) when creating an incident? If not, we’ll rely on SN business rules. [4_tmm_tech...design_dev | Word]
+
+HT>> yes 
+
+Dedupe & config
+8) Confirm dedupe state location: in‑memory only (per‑pod) or shared (Redis/Azure Cache) for cross‑pod idempotency. 
+HT>> could be a master file in ADLS 
+
+9) Config updates: allow hot‑reload via API/signal, or restart‑only? Who owns versioning/rollback? [4_tmm_tech...design_dev | Word]
+Governance
+HT>> Me 
+
+10) Do outbound emails require a standard footer/disclaimer + classification tag (e.g., “Internal”)? If yes, I’ll add a global template wrapper. [4_tmm_tech...design_dev | Word]
+HT>> Yes 

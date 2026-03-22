@@ -1,0 +1,13 @@
+{
+  "p95_ingest_ms": 200,
+  "p95_email_ms": 1000,
+  "error_rate_threshold_percent": 1,
+  "retry_limits": {
+    "servicenow": 3,
+    "bigpanda": 3,
+    "email": 2
+  },
+  "sla": {
+    "uptime_percent": 99.9
+  }
+}
