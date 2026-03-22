@@ -5,7 +5,7 @@ import pytest
 from fastapi.testclient import TestClient
 from tmm.api.http_app import app
 from tmm.config.loader import ConfigLoader
-from tmm.service.dedupe_engine import ADLSDedupeEngine
+from tmm.service.dedupe_engine import ResourceNotFoundError, ResourceModifiedError
 
 
 @pytest.fixture(scope="session")
@@ -140,7 +140,7 @@ class FakeBlobClient:
 
     def download_blob(self):
         if not self.exists:
-            raise FileNotFoundError()
+            raise ResourceNotFoundError()
 
         class FakeDownloader:
             def __init__(self, data):
@@ -153,7 +153,7 @@ class FakeBlobClient:
 
     def get_blob_properties(self):
         if not self.exists:
-            raise FileNotFoundError()
+            raise ResourceNotFoundError()
         return type("P", (), {"etag": self.etag})()
 
     def upload_blob(self, data, overwrite=True, if_match=None):
@@ -165,10 +165,10 @@ class FakeBlobClient:
                 self._data = json.dumps({"hashes": list(remote_state["hashes"])}).encode("utf-8")
                 self.exists = True
                 self.etag = '"1"'
-            raise RuntimeError("Simulated ResourceModifiedError")
+            raise ResourceModifiedError("Simulated ResourceModifiedError")
 
         if if_match is not None and self.exists and if_match != self.etag:
-            raise RuntimeError("Simulated ResourceModifiedError")
+            raise ResourceModifiedError("Simulated ResourceModifiedError")
 
         self._data = data
         self.exists = True

@@ -58,7 +58,7 @@ class BigPandaClient:
         if window_minutes is None:
             window_minutes = self.time_window_minutes
 
-        window_cutoff = datetime.utcnow() - timedelta(minutes=window_minutes)
+        window_cutoff = datetime.now(datetime.UTC) - timedelta(minutes=window_minutes)
 
         return [
             {
