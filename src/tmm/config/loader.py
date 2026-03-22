@@ -1,17 +1,50 @@
 import json
+import os
 from pathlib import Path
 from typing import Any, Dict
 
+import yaml
+
 
 class ConfigLoader:
-    def __init__(self, root: Path | str = "/config"):
+    def __init__(self, root: Path | str | None = None):
+        if root is None:
+            root = os.getenv("TMM_CONFIG_ROOT", "config")
         self.root = Path(root)
+        self._cache: Dict[str, Any] = {}
+        self._hot_reload = False
+
+    def enable_hot_reload(self, enabled: bool = True) -> None:
+        self._hot_reload = enabled
+
+    def reload(self) -> None:
+        self._cache.clear()
+
+    def _load_file(self, full_path: Path) -> Dict[str, Any]:
+        if not full_path.exists():
+            raise FileNotFoundError(f"Config file not found: {full_path}")
+
+        ext = full_path.suffix.lower()
+        text = full_path.read_text(encoding="utf-8")
+
+        if ext in [".json"]:
+            return json.loads(text)
+        if ext in [".yaml", ".yml"]:
+            return yaml.safe_load(text)
+
+        raise ValueError(f"Unsupported config file format: {ext}")
 
     def load(self, path: str) -> Dict[str, Any]:
+        if path in self._cache and not self._hot_reload:
+            return self._cache[path]
+
         full = self.root / path
-        if not full.exists():
-            raise FileNotFoundError(f"Config file not found: {full}")
-        return json.loads(full.read_text(encoding="utf-8"))
+        loaded = self._load_file(full)
+
+        if not self._hot_reload:
+            self._cache[path] = loaded
+
+        return loaded
 
     def app(self) -> Dict[str, Any]:
         return self.load("app.json")
