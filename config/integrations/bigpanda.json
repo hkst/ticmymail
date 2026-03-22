@@ -2,6 +2,7 @@
   "api_url": "https://api.bigpanda.io/data/v2/alerts",
   "api_token": "TODO_BIGPANDA_API_TOKEN",
   "timeout_seconds": 30,
+  "time_window_minutes": 60,
   "retry_policy": {
     "max_attempts": 3,
     "backoff_seconds": 2

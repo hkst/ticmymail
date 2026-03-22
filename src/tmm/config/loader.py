@@ -64,5 +64,17 @@ class ConfigLoader:
     def email(self) -> Dict[str, Any]:
         return self.load("email/provider.json")
 
+    def email_wrapper(self) -> str:
+        path = self.root / "email" / "wrapper.md"
+        if not path.exists():
+            raise FileNotFoundError(f"Email wrapper not found: {path}")
+        return path.read_text(encoding="utf-8")
+
+    def email_template(self, key: str) -> str:
+        path = self.root / "email" / "templates" / f"{key}.md"
+        if not path.exists():
+            raise FileNotFoundError(f"Email template not found: {path}")
+        return path.read_text(encoding="utf-8")
+
     def nfr(self) -> Dict[str, Any]:
         return self.load("nfr.json")

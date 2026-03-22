@@ -10,6 +10,11 @@
       "caller_id": "{{sender}}"
     }
   },
+  "api_paths": {
+    "incident": "/api/now/table/incident",
+    "comment": "/api/now/table/incident",
+    "attachment": "/api/now/attachment/file"
+  },
   "timeout_seconds": 30,
   "retry_policy": {
     "max_attempts": 3,

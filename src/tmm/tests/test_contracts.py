@@ -21,6 +21,18 @@ def config_loader(tmp_path_factory):
     (cfg / "dedupe" / "v1" / "dedupe.rules.json").write_text(
         json.dumps({"dedupe_fields": ["message_id"]}), encoding="utf-8"
     )
+    (cfg / "email").mkdir(parents=True, exist_ok=True)
+    (cfg / "email" / "provider.json").write_text(
+        json.dumps({
+            "type": "smtp_relay",
+            "retry_policy": {"max_attempts": 2, "backoff_seconds": 0},
+            "smtp": {"host": "localhost", "port": 587},
+        }),
+        encoding="utf-8",
+    )
+    (cfg / "email" / "wrapper.md").write_text("{{ body }}\n\n---\nFooter", encoding="utf-8")
+    (cfg / "email" / "templates").mkdir(parents=True, exist_ok=True)
+    (cfg / "email" / "templates" / "status.md").write_text("Status: {{body}}", encoding="utf-8")
     os.environ["TMM_CONFIG_ROOT"] = str(cfg)
     yield ConfigLoader(str(cfg))
     os.environ.pop("TMM_CONFIG_ROOT", None)
@@ -66,6 +78,56 @@ def test_email_threading_headers(client):
     data = r.json()
     assert data["in_reply_to"] == payload["message_id"]
     assert data["references"] == payload["thread_id"]
+
+
+def test_email_template_and_wrapper(client):
+    payload = {
+        "to": "bob@example.com",
+        "subject": "Hello",
+        "template_key": "status",
+        "body": "ok",
+        "message_id": "<msgid2@example.com>",
+        "thread_id": "<thread2@example.com>",
+    }
+
+    r = client.post("/v1/comm/email", json=payload)
+    assert r.status_code == 200
+    data = r.json()
+    assert data["provider"] == "smtp_relay" or data["provider"] == "graph_send_only" or data["status"] == "sent"
+
+    # ensure wrapper applied from config/email/wrapper.md
+    assert "ticmymail Part‑2 service" in data["message"]["body"]
+    assert "Current state" in data["message"]["body"]
+
+
+def test_servicenow_create_and_comment(client):
+    payload = {"subject": "Test", "body": "Hello", "sender": "alice"}
+    r = client.post("/v1/integrations/servicenow/incidents", json=payload) 
+    assert r.status_code == 200
+    assert r.json()["operation"] == "create"
+
+    sys_id = "sys123"
+    r2 = client.post(f"/v1/integrations/servicenow/incidents/{sys_id}/comment", json={"comment": "Note"})
+    assert r2.status_code == 200
+    assert r2.json()["operation"] == "comment"
+
+
+def test_bigpanda_post_and_search_and_correlate(client):
+    payload = [
+        {"host": "h1", "service": "svc", "status": "critical", "description": "d", "tags": ["t1"]}
+    ]
+    r = client.post("/v1/integrations/bigpanda/events", json=payload)
+    assert r.status_code == 200
+    assert r.json()["ok"] is True
+
+    q = {"tags": ["t1"], "service": "svc"}
+    r2 = client.post("/v1/integrations/bigpanda/search", json=q)
+    assert r2.status_code == 200
+    assert r2.json()["ok"] is True
+
+    r3 = client.post("/v1/integrations/bigpanda/correlate", json={"alert_id": "sim-1", "correlation_ids": ["cid1"]})
+    assert r3.status_code == 200
+    assert r3.json()["operation"] == "attach_correlation"
 
 
 def test_version_contains_config_versions(client, config_loader):
