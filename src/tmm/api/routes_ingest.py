@@ -4,11 +4,25 @@ from fastapi import APIRouter, Request, HTTPException
 from pydantic import BaseModel, Field
 from tmm.config.loader import ConfigLoader
 from tmm.logger import log_event
-from tmm.service.dedupe_engine import DedupeEngine
+from tmm.service.dedupe_engine import DedupeEngine, ADLSDedupeEngine
 from tmm.service.incident_service import IncidentService
 
 router = APIRouter()
-service = IncidentService(DedupeEngine())
+
+
+def _create_service():
+    loader = ConfigLoader()
+    app_cfg = loader.app()
+    dedupe_backend = app_cfg.get("dedupe", {}).get("backend", "memory")
+    if dedupe_backend == "adls":
+        dedupe_engine = ADLSDedupeEngine(app_cfg)
+    else:
+        dedupe_engine = DedupeEngine()
+
+    return IncidentService(dedupe_engine)
+
+
+service = _create_service()
 
 
 class IngestPayload(BaseModel):

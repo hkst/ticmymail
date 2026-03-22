@@ -1,0 +1,6 @@
+Create following 
+A JSON‑encoded agent prompt file for direct import into GitHub Copilot Agents
+A YAML persona definition for A2A pipelines
+
+my json-encoded agent prompt should include your recommendation like and including as below 
+"Want me to also generate starter config stubs (schema.json, dedupe.rules.json, servicenow.json, bigpanda.json, email/templates/*.md, nfr.json) in your repo structure so the agents can start wiring code immediately?"

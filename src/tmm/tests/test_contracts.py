@@ -5,6 +5,7 @@ import pytest
 from fastapi.testclient import TestClient
 from tmm.api.http_app import app
 from tmm.config.loader import ConfigLoader
+from tmm.service.dedupe_engine import ADLSDedupeEngine
 
 
 @pytest.fixture(scope="session")
@@ -128,6 +129,73 @@ def test_bigpanda_post_and_search_and_correlate(client):
     r3 = client.post("/v1/integrations/bigpanda/correlate", json={"alert_id": "sim-1", "correlation_ids": ["cid1"]})
     assert r3.status_code == 200
     assert r3.json()["operation"] == "attach_correlation"
+
+
+class FakeBlobClient:
+    def __init__(self):
+        self._data = b""
+        self.exists = False
+        self.etag = None
+        self.conflict_next_upload = False
+
+    def download_blob(self):
+        if not self.exists:
+            raise FileNotFoundError()
+
+        class FakeDownloader:
+            def __init__(self, data):
+                self._data = data
+
+            def readall(self):
+                return self._data
+
+        return FakeDownloader(self._data)
+
+    def get_blob_properties(self):
+        if not self.exists:
+            raise FileNotFoundError()
+        return type("P", (), {"etag": self.etag})()
+
+    def upload_blob(self, data, overwrite=True, if_match=None):
+        if self.conflict_next_upload:
+            self.conflict_next_upload = False
+            # Simulate another process writing the same new hash concurrently
+            remote_state = json.loads(data.decode("utf-8"))
+            if "hashes" in remote_state:
+                self._data = json.dumps({"hashes": list(remote_state["hashes"])}).encode("utf-8")
+                self.exists = True
+                self.etag = '"1"'
+            raise RuntimeError("Simulated ResourceModifiedError")
+
+        if if_match is not None and self.exists and if_match != self.etag:
+            raise RuntimeError("Simulated ResourceModifiedError")
+
+        self._data = data
+        self.exists = True
+        self.etag = '"1"'
+
+
+def test_adls_dedupe_engine_conflict_no_duplicate(tmp_path):
+    app_cfg = {
+        "dedupe": {"backend": "adls", "write_attempts": 2, "cache_ttl_seconds": 1, "reconcile_interval_seconds": 1},
+        "adls_dedupe": {"container": "dedupe", "blob_path": "dedupe-state.json", "connection_string": "fake"},
+    }
+    fake_blob = FakeBlobClient()
+    engine = ADLSDedupeEngine(app_cfg, blob_client=fake_blob)
+
+    payload = {"subject": "test", "body": "hello"}
+    # first call should write and return False (not duplicate)
+    assert engine.is_duplicate("k1", payload) is False
+
+    # second call same key should be duplicate
+    assert engine.is_duplicate("k1", payload) is True
+
+    # simulate lease/write conflict on a different key (commit happened in between)
+    fake_blob.conflict_next_upload = True
+    new_payload = {"subject": "test2", "body": "hello2"}
+    # because conflict triggers remote refresh and remote now contains this key, should become duplicate
+    result = engine.is_duplicate("k2", new_payload)
+    assert result is True
 
 
 def test_version_contains_config_versions(client, config_loader):
