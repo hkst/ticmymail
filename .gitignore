@@ -1,0 +1,8 @@
+*.pyc
+src/tmm/api/__pycache__/routes_servicenow.cpython-313.pyc
+src/tmm/__pycache__/logger.cpython-313.pyc
+src/ticmymail.egg-info/dependency_links.txt
+src/ticmymail.egg-info/PKG-INFO
+src/ticmymail.egg-info/requires.txt
+src/ticmymail.egg-info/SOURCES.txt
+src/ticmymail.egg-info/top_level.txt
