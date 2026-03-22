@@ -1,0 +1,69 @@
+Gaps / questions before an agentic build:
+
+Confirm ITSM platform (ServiceNow, JSM, Remedy, other) and API endpoints (REST paths, auth, scopes).
+HT>> ITSM Platform is ServiceNow ( ATLAS) and and API endpoints (Rest paths will be part of configuration 
+
+Mailbox details: Exchange Online? Graph API vs EWS? polling vs webhook (Graph subscription) for ≤60s create SLA.
+HT>> This is not in scope for the part2. This software receives payload from email processing system. this software should be agnositc of source email system
+
+Tenant, app registration, and delegated vs application permissions for mail.read, mail.send, and user.read scopes.
+HT>> This is not in scope for the part2. This software receives payload from email processing system. t
+
+Dedicated mailbox address, shared mailbox vs user mailbox, and access model (client secret vs cert).
+HT>> This is not in scope for the part2. This software receives payload from email processing system. t
+
+Exact payload schema from Part‑1→Part‑2 (JSON fields for subject, body, sender UPN, thread/message‑id, attachments, timestamps, inferred priority). [3_tmm_tech..._architect | Word]
+HT>> json schema will be provided as file on start up. design should be adopatable
+
+Attachment constraints: allowed types, max size, virus/DLP scanning flow, how to store large files (S3/Blob vs ITSM native). [2_tmm_prob...ing_poview | Word], [3_tmm_tech..._architect | Word]
+HT>> None
+Dedupe logic spec: correlation keys, time window, fuzzy matching thresholds, idempotency keys, merge behavior. [2_tmm_prob...ing_poview | Word], [3_tmm_tech..._architect | Word]
+HT>> will be provided as json configuration and software should not hardcode and intelligently adopt to changes 
+
+Routing rules source: service catalog, CI/CMDB mapping, on‑call roster system, fallback group if no match. [3_tmm_tech..._architect | Word]
+HT>>NOT in scope
+
+Priority model: definitions for P1/P2, SLA timers, breach rules, escalation paths. [3_tmm_tech..._architect | Word]
+HT>> NOT In scope
+
+Two‑way email update mechanism: how to persist and reuse Message‑ID/Conversation‑ID for same‑thread replies; who sends (gateway vs ITSM). [3_tmm_tech..._architect | Word]
+HT>> TBC evolve as we develop
+
+Slim intake fields: mandatory vs optional at ingest; which enrichment fields resolvers must add post‑intake. [2_tmm_prob...ing_poview | Word], [3_tmm_tech..._architect | Word]
+HT>> TBC evolve as we develop
+
+Audit trail store: immutable log tech (WORM, append‑only), retention period, PII handling, export for audit. [2_tmm_prob...ing_poview | Word], [3_tmm_tech..._architect | Word]
+HT>> basic audit using log4python 
+
+
+Allowlist/denylist: internal senders only? handling of external emails, spoofing protection (SPF/DKIM/DMARC). [3_tmm_tech..._architect | Word]
+HT>> Internal sender only. 
+
+Noise control: throttling rules per sender/system, backoff, quarantine queue for low‑confidence items. [3_tmm_tech..._architect | Word]
+HT>> TBC
+Live dashboard: source of truth (ITSM vs custom store), metrics to expose (queue, MTTA/MTTR, SLA), refresh cadence. [3_tmm_tech..._architect | Word]
+HT>> NOT In scope
+
+Ops runbook hooks: where runbook links live; any auto‑runbook actions in scope now vs Phase 2. [3_tmm_tech..._architect | Word]
+Failure modes: ITSM outage handling (queue and replay), email ingestion backlog recovery, duplicate suppression on retries. [3_tmm_tech..._architect | Word]
+HT>> tBC 
+
+Environment strategy: dev/test/prod mailboxes, data segregation, config as code, feature flags.
+HT>> final system is deployed for Production queries only
+ 
+Observability: logs, traces, metrics; alerting on create latency >60s and dedupe accuracy drift. [3_tmm_tech..._architect | Word]
+HT>> Standard
+Security: encryption at rest/in transit, secrets management, access reviews, audit sampling cadence. [3_tmm_tech..._architect | Word]
+HT>> Standard
+Compliance: retention mapping to mail + ITSM, legal hold, eDiscovery requirements. [2_tmm_prob...ing_poview | Word], [3_tmm_tech..._architect | Word]
+HT>> Standard
+Non‑goals confirmation: no portal, no ITSM replacement, no forcing architecture‑level input at intake. [2_tmm_prob...ing_poview | Word], [3_tmm_tech..._architect | Word]
+HT>> yes 
+Success metrics collection method and baseline figures for MTTA/MTTR to prove deltas. [2_tmm_prob...ing_poview | Word], [3_tmm_tech..._architect | Word]
+HT>> Not in scope 
+Team model for MVP (roles, capacity) and cutover plan for analysts. [3_tmm_tech..._architect | Word]
+HT>> Not in scope 
+
+If you confirm the platform, mailbox, auth, payload schema, routing/dedupe rules, and audit requirements, I can draft the agentic system plan (ingestor, parser, classifier, rules engine, ITSM client, notifier, observability, and QA harness) next.
+
+HT>> Not in scope for this prompt. Only review and firmup these three documents 
