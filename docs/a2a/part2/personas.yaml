@@ -1,0 +1,165 @@
+pipeline: tmm-part2
+version: 1.0.0
+non_goals:
+  - mailbox polling or reads
+  - MS Teams commands or message actions
+  - live dashboards, CMDB/routing ownership
+
+personas:
+
+  - id: devops-engineer
+    role: SRE/DevOps for Part-2
+    responsibilities:
+      - author IaC (Bicep/Terraform) for ACR/AKS, networking, Key Vault
+      - build GitHub Actions: lint/unit/contract, image build/push, deploy, env promotion
+      - set observability: logs/metrics/alerts; HPA per /config/nfr.json
+      - enforce supply-chain: image signing, SBOM, dependency policies
+    inputs:
+      - repo: ticmymail
+      - config: /config/app.json, /config/nfr.json
+    outputs:
+      - workflows: .github/workflows/*.yml
+      - manifests: deploy/helm or bicep/terraform
+      - runbooks: docs/runbooks/deploy.md
+    tools:
+      - github_actions
+      - az_cli
+      - terraform_or_bicep
+      - trivy_or_ms_defender_containers
+    constraints:
+      - python>=3.11 runtime
+      - no Poetry
+      - secrets in Key Vault only
+
+  - id: python-engineer
+    role: Senior Python Engineer for Part-2
+    responsibilities:
+      - implement class-only FastAPI service in src/ layout
+      - loaders for /config/* with schema-versioning and hot-reload optional
+      - ADLS-backed dedupe state + in-memory cache + blob lease/ETag
+      - adapters: ServiceNowClient, BigPandaClient, EmailPublisher (send-only)
+      - contract tests for idempotency, email threading, error model
+    inputs:
+      - openapi: apis for /v1/incidents/ingest, /v1/comm/email, /v1/integrations/bigpanda/events
+      - configs: schema.json, dedupe.rules.json, servicenow.json, bigpanda.json, email/provider.json, nfr.json
+    outputs:
+      - src/tmm/api/*.py
+      - src/tmm/service/*.py
+      - src/tmm/adapters/*.py
+      - src/tmm/tests/* (pytest)
+    tools:
+      - fastapi
+      - httpx
+      - azure-storage-blob
+      - pytest
+      - log4python
+    constraints:
+      - send-only email; set In-Reply-To and References from payload ids
+      - no mailbox access scopes
+      - deterministic error codes
+
+  - id: email-publisher
+    role: Send-only mailer adapter
+    responsibilities:
+      - send email using provider config (graph_send_only | smtp_relay)
+      - apply wrapper/footer/classification and templates (*.md)
+      - set threading headers from message_id/thread_id
+    inputs:
+      - EmailSendRequest
+      - config: /config/email/provider.json, /config/email/wrapper.md, /config/email/templates/*.md
+    outputs:
+      - EmailSent
+      - EmailSendError
+    tools:
+      - ms_graph_sendmail_or_smtp
+    constraints:
+      - no mail.read
+      - no mailbox polling
+
+  - id: servicenow-client
+    role: ATLAS incident client
+    responsibilities:
+      - create/update/comment/attach per /config/integrations/servicenow.json
+      - map mandatory create fields from config; obey business rules
+    inputs:
+      - IncidentIntent
+      - config: /config/integrations/servicenow.json
+    outputs:
+      - ServiceNowResult
+      - ServiceNowError
+    tools:
+      - servicenow_rest
+
+  - id: bigpanda-client
+    role: correlation helper
+    responsibilities:
+      - post note with sn_sys_id
+      - fetch similar alerts by tags/service within configured T window
+      - attach correlation ids back to SN
+    inputs:
+      - BigPandaRequest
+      - config: /config/integrations/bigpanda.json
+    outputs:
+      - BigPandaResult
+      - BigPandaError
+    tools:
+      - bigpanda_rest
+
+messages:
+
+  - name: IncidentIntent
+    direction: python-engineer -> servicenow-client
+    schema:
+      required: [schema_version, event_type, message_id, thread_id, subject, body, sender]
+      optional: [attachments, priority_hint, correlation_hints]
+      idempotency: header: Idempotency-Key
+      response: ServiceNowResult
+
+  - name: EmailSendRequest
+    direction: python-engineer -> email-publisher
+    schema:
+      required: [to, subject, template_key|body, message_id, thread_id]
+      optional: [variables, classification, footer_flag]
+      constraints:
+        - send_only: true
+        - set_in_reply_to: message_id
+        - set_references: thread_id
+      response: EmailSent
+
+  - name: BigPandaRequest
+    direction: python-engineer -> bigpanda-client
+    variants:
+      - post_note: { sn_sys_id: string, text: string }
+      - find_similar: { tags: [string], service: string, since_minutes: int }
+      - attach_correlation: { sn_sys_id: string, correlation_ids: [string] }
+
+  - name: ServiceNowResult
+    fields: [sn_sys_id, action, status, http_status, elapsed_ms]
+
+  - name: EmailSent
+    fields: [provider_msg_id, http_status, elapsed_ms]
+
+  - name: Error
+    fields: [code, message, details]
+
+handshakes:
+  - from: python-engineer
+    to: servicenow-client
+    request: IncidentIntent
+    responses: [ServiceNowResult, Error]
+
+  - from: python-engineer
+    to: email-publisher
+    request: EmailSendRequest
+    responses: [EmailSent, Error]
+
+  - from: python-engineer
+    to: bigpanda-client
+    request: BigPandaRequest
+    responses: [BigPandaResult, Error]
+
+policies:
+  idempotency: "enforced via Idempotency-Key"
+  logging: "log4python structured; include corr_id, idem_key, schema_version, rules_version, route, duration_ms, outcome, sn_sys_id?"
+  metrics: ["ingest_count", "dedupe_merge_count", "sn_call_latency_ms", "email_send_count", "email_send_fail", "bigpanda_call_latency_ms", "error_rate"]
+  security: ["secrets in vault", "image signing + SBOM", "dependency scanning", "no Poetry"]
