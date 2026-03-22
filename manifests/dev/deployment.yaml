@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ticmymail
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ticmymail
+  template:
+    metadata:
+      labels:
+        app: ticmymail
+    spec:
+      containers:
+        - name: ticmymail
+          image: ticmymail:latest
+          ports:
+            - containerPort: 8080

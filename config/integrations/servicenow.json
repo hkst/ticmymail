@@ -1,0 +1,23 @@
+{
+  "instance_url": "https://example.service-now.com",
+  "client_id": "TODO_CLIENT_ID",
+  "client_secret": "TODO_CLIENT_SECRET",
+  "scope": "useraccount.userinfo.read",
+  "mappings": {
+    "incident": {
+      "short_description": "{{subject}}",
+      "description": "{{body}}",
+      "caller_id": "{{sender}}"
+    }
+  },
+  "api_paths": {
+    "incident": "/api/now/table/incident",
+    "comment": "/api/now/table/incident",
+    "attachment": "/api/now/attachment/file"
+  },
+  "timeout_seconds": 30,
+  "retry_policy": {
+    "max_attempts": 3,
+    "backoff_seconds": 2
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "type": "smtp",
+  "smtp": {
+    "host": "localhost",
+    "port": 587,
+    "use_tls": true,
+    "username": "TODO_SMTP_USER",
+    "password": "TODO_SMTP_PASS"
+  },
+  "graph": {
+    "tenant_id": "TODO_TENANT_ID",
+    "client_id": "TODO_CLIENT_ID",
+    "client_secret": "TODO_CLIENT_SECRET"
+  }
+}
