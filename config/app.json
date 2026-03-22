@@ -1,0 +1,12 @@
+{
+  "service_name": "ticmymail-part2",
+  "environment": "dev",
+  "dedupe_root": "/config/dedupe-state",
+  "config_version": "v1",
+  "log_level": "INFO",
+  "features": {
+    "servicenow": true,
+    "bigpanda": true,
+    "email": true
+  }
+}
