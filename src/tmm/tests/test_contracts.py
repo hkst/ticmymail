@@ -5,7 +5,7 @@ import pytest
 from fastapi.testclient import TestClient
 from tmm.api.http_app import app
 from tmm.config.loader import ConfigLoader
-from tmm.service.dedupe_engine import ResourceNotFoundError, ResourceModifiedError
+from tmm.service.dedupe_engine import ADLSDedupeEngine, ResourceNotFoundError, ResourceModifiedError
 
 
 @pytest.fixture(scope="session")
