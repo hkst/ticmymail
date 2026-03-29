@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 from tmm.api.http_app import app
+from tmm.api.routes_ingest import IngestPayload, _build_ingest_payload
 from tmm.config.loader import ConfigLoader
 from tmm.service.dedupe_engine import ADLSDedupeEngine, ResourceNotFoundError, ResourceModifiedError
 
@@ -63,6 +64,58 @@ def test_ingest_idempotency(client):
     assert r2.status_code == 200
     assert r1.json()["sn_sys_id"] == r2.json()["sn_sys_id"]
     assert r1.json()["status"] == r2.json()["status"]
+
+
+def test_ingest_payload_files_validate_correctly():
+    base_path = Path(__file__).parent
+    good_data = json.loads((base_path / "email_payload_good.json").read_text(encoding="utf-8"))
+    err_data = json.loads((base_path / "email_payload_err.json").read_text(encoding="utf-8"))
+
+    normalized_good = _build_ingest_payload(good_data)
+    good_payload = IngestPayload(**normalized_good)
+
+    assert good_payload.schema_version == "v1"
+    assert good_payload.event_type == "new"
+    assert good_payload.message_id == good_data["value"][0]["id"]
+    assert good_payload.thread_id == good_data["value"][0]["conversationId"]
+    assert good_payload.body == good_data["value"][0]["bodyPreview"]
+    assert good_payload.sender == good_data["value"][0]["from"]["emailAddress"]["address"]
+
+    normalized_err = _build_ingest_payload(err_data)
+    with pytest.raises(Exception):
+        IngestPayload(**normalized_err)
+
+
+def test_outlook_style_ingest_payload(client):
+    payload = {
+        "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+        "value": [
+            {
+                "@odata.etag": "W/\"CQAAABYAAADGZgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+                "id": "<mid1@example.com>",
+                "conversationId": "<tid@example.com>",
+                "createdDateTime": "2024-06-01T12:00:00Z.000Z",
+                "receivedDateTime": "2024-06-01T12:00:00Z.000Z",
+                "subject": "Test Event - data decerpencence in cpty-xyz report dated 12 march",
+                "bodyPreview": "This is a test event to check data decerpencence in cpty-xyz report dated 12 march.",
+                "from": {
+                    "emailAddress": {
+                        "name": "John Doe",
+                        "address": "john.doe@example.com"
+                    }
+                },
+                "importance": "normal",
+                "schema_version": "v1",
+                "event_type": "new"
+            }
+        ]
+    }
+    headers = {"Idempotency-Key": "idem-key-outlook"}
+
+    r = client.post("/v1/incidents/ingest", json=payload, headers=headers)
+
+    assert r.status_code == 200
+    assert r.json()["status"] == "accepted"
 
 
 def test_email_threading_headers(client):
