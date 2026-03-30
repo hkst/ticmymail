@@ -18,6 +18,7 @@ test = [
   "pytest>=8.4",
   "httpx>=0.28",
   "pytest-asyncio>=0.23",
+  "pytest-cov>=4.1",
   "log4python>=0.6.1"
 ]
 

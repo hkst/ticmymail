@@ -1,0 +1,21 @@
+{
+    "@odata.context":"https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events"},
+    "value":[{"@odata.etag":"W/\"CQAAABYAAADGZgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+    "id":"AAMkADk3M2YyYjE0LTQ4ODQtNDg5ZC1iMjE5LWU4MzE3ZDEwYjAAYgAAA9sH8qL7n%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8AAAAAAEMAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+    "createdDateTime":"2024-06-01T12:00:00Z.000Z",
+    "lastModifiedDateTime":"2024-06-01T12:00:00Z.000Z",
+    "receivedDateTime":"2024-06-01T12:00:00Z.000Z",
+    "changeKey":"CQAAABYAAADGZgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+    "subject":"Test Event - data decerpencence in cpty-xyz report dated 12 march",
+    "bodyPreview":"This is a test event to check data decerpencence in cpty-xyz report dated 12 march.",
+    "from":{
+        "emailAddress":{
+            "name":"John Doe",
+            "address":"john.doe@example.com"
+            }
+        },
+    "importance":"normal"
+    }
+    ]
+}
+

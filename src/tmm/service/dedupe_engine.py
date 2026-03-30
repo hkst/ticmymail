@@ -76,7 +76,7 @@ class ADLSDedupeEngine:
             data = downloader.readall().decode("utf-8")
             payload = json.loads(data)
             return set(payload.get("hashes", []))
-        except ResourceNotFoundError:
+        except (ResourceNotFoundError, FileNotFoundError):
             return set()
 
     def _write_remote_state(self, hashes: Set[str], etag: Optional[str] = None) -> None:
