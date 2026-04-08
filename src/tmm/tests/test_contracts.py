@@ -7,12 +7,23 @@ from tmm.api.http_app import app
 from tmm.api.routes_ingest import IngestPayload, _build_ingest_payload
 from tmm.config.loader import ConfigLoader
 from tmm.service.dedupe_engine import ADLSDedupeEngine, ResourceNotFoundError, ResourceModifiedError
+from tmm.service.payload_factory import PayloadScenarioFactory
 
 
 @pytest.fixture(scope="session")
 def config_loader(tmp_path_factory):
     cfg = tmp_path_factory.mktemp("config")
-    (cfg / "app.json").write_text(json.dumps({"config_version": "v1"}), encoding="utf-8")
+    (cfg / "app.json").write_text(
+        json.dumps(
+            {
+                "config_version": "v1",
+                "incident_backend": "servicenow",
+                "features": {"jira": True, "servicenow": True, "bigpanda": True, "email": True},
+                "dedupe": {"backend": "memory", "write_attempts": 2, "cache_ttl_seconds": 1, "reconcile_interval_seconds": 1},
+            }
+        ),
+        encoding="utf-8",
+    )
     (cfg / "schema").mkdir(parents=True, exist_ok=True)
     (cfg / "schema" / "v1").mkdir(parents=True, exist_ok=True)
     (cfg / "schema" / "v1" / "schema.json").write_text(
@@ -21,7 +32,54 @@ def config_loader(tmp_path_factory):
     (cfg / "dedupe").mkdir(parents=True, exist_ok=True)
     (cfg / "dedupe" / "v1").mkdir(parents=True, exist_ok=True)
     (cfg / "dedupe" / "v1" / "dedupe.rules.json").write_text(
-        json.dumps({"dedupe_fields": ["message_id"]}), encoding="utf-8"
+        json.dumps({"dedupe_fields": ["subject", "body", "sender"]}), encoding="utf-8"
+    )
+    (cfg / "integrations").mkdir(parents=True, exist_ok=True)
+    (cfg / "integrations" / "servicenow.json").write_text(
+        json.dumps(
+            {
+                "instance_url": "https://example.service-now.com",
+                "mappings": {
+                    "incident": {
+                        "short_description": "{{subject}}",
+                        "description": "{{body}}",
+                        "caller_id": "{{sender}}",
+                    }
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    (cfg / "integrations" / "jira.json").write_text(
+        json.dumps(
+            {
+                "base_url": "https://example.atlassian.net",
+                "api_token": "dummy",
+                "email": "tester@example.com",
+                "service_desk_id": "1",
+                "request_type_id": "2",
+                "enabled": True,
+                "dry_run": True,
+                "raise_on_behalf_of": True,
+                "request_field_map": {
+                    "dept_name": "customfield_10101",
+                    "external_ref": "customfield_10102",
+                    "payload_json": "customfield_10103",
+                    "data_domain": "customfield_10120",
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    (cfg / "integrations" / "bigpanda.json").write_text(
+        json.dumps(
+            {
+                "api_url": "https://api.bigpanda.io/data/v2/alerts",
+                "api_token": "dummy",
+                "enable_correlation": True,
+            }
+        ),
+        encoding="utf-8",
     )
     (cfg / "email").mkdir(parents=True, exist_ok=True)
     (cfg / "email" / "provider.json").write_text(
@@ -29,19 +87,21 @@ def config_loader(tmp_path_factory):
             "type": "smtp_relay",
             "retry_policy": {"max_attempts": 2, "backoff_seconds": 0},
             "smtp": {"host": "localhost", "port": 587},
+            "default_classification": "INTERNAL",
         }),
         encoding="utf-8",
     )
     (cfg / "email" / "wrapper.md").write_text("{{ body }}\n\n---\nFooter", encoding="utf-8")
     (cfg / "email" / "templates").mkdir(parents=True, exist_ok=True)
     (cfg / "email" / "templates" / "status.md").write_text("Status: {{body}}", encoding="utf-8")
+    (cfg / "nfr.json").write_text(json.dumps({"p95_ingest_ms": 200}), encoding="utf-8")
     os.environ["TMM_CONFIG_ROOT"] = str(cfg)
     yield ConfigLoader(str(cfg))
     os.environ.pop("TMM_CONFIG_ROOT", None)
 
 
 @pytest.fixture
-def client():
+def client(config_loader):
     return TestClient(app)
 
 
@@ -64,6 +124,7 @@ def test_ingest_idempotency(client):
     assert r2.status_code == 200
     assert r1.json()["sn_sys_id"] == r2.json()["sn_sys_id"]
     assert r1.json()["status"] == r2.json()["status"]
+    assert r1.json()["action"] == "create"
 
 
 def test_ingest_payload_files_validate_correctly():
@@ -118,6 +179,50 @@ def test_outlook_style_ingest_payload(client):
     assert r.json()["status"] == "accepted"
 
 
+def test_jira_target_system_ingest_returns_issue_key(client):
+    payload = {
+        "schema_version": "v1",
+        "event_type": "new",
+        "message_id": "<jira-mid@example.com>",
+        "thread_id": "<jira-thread@example.com>",
+        "subject": "Acme Market Risk Jira demo",
+        "body": "Acme Market Risk issue on Data, VaR analytics and reporting platform.",
+        "sender": "alice@example.com",
+        "target_system": "jira",
+        "dept_name": "Market Risk",
+        "external_ref": "ACME-EXT-42",
+        "payload_json": {"source": "phase1"},
+        "data_domain": "VaR",
+    }
+
+    r = client.post("/v1/incidents/ingest", json=payload, headers={"Idempotency-Key": "jira-idem-1"})
+
+    assert r.status_code == 200
+    data = r.json()
+    assert data["ticket_system"] == "jira"
+    assert data["jira_issue_key"].startswith("SIM-")
+    assert data["action"] == "create"
+    assert data["jira_request_fields"]["customfield_10101"] == "Market Risk"
+    assert data["jira_request_fields"]["customfield_10102"] == "ACME-EXT-42"
+    assert "phase1" in data["jira_request_fields"]["customfield_10103"]
+    assert data["jira_request_fields"]["customfield_10120"] == "VaR"
+
+
+def test_dedupe_demo_merges_duplicate_payloads(client):
+    sample = json.loads((Path(__file__).parent / "email_payload_good.json").read_text(encoding="utf-8"))
+    factory = PayloadScenarioFactory(sample)
+    duplicate_payloads = factory.build_duplicate_demo()
+
+    first = client.post("/v1/incidents/ingest", json=duplicate_payloads[0], headers={"Idempotency-Key": "dedupe-1"})
+    second = client.post("/v1/incidents/ingest", json=duplicate_payloads[1], headers={"Idempotency-Key": "dedupe-2"})
+
+    assert first.status_code == 200
+    assert second.status_code == 200
+    assert first.json()["status"] == "accepted"
+    assert second.json()["status"] == "duplicate"
+    assert second.json()["action"] == "merge"
+
+
 def test_email_threading_headers(client):
     payload = {
         "to": "bob@example.com",
@@ -132,6 +237,8 @@ def test_email_threading_headers(client):
     data = r.json()
     assert data["in_reply_to"] == payload["message_id"]
     assert data["references"] == payload["thread_id"]
+    assert data["sent"] is True
+    assert data["provider_msg_id"].startswith("msg-")
 
 
 def test_email_template_and_wrapper(client):
@@ -142,6 +249,7 @@ def test_email_template_and_wrapper(client):
         "body": "ok",
         "message_id": "<msgid2@example.com>",
         "thread_id": "<thread2@example.com>",
+        "classification": "CONFIDENTIAL",
     }
 
     r = client.post("/v1/comm/email", json=payload)
@@ -150,8 +258,9 @@ def test_email_template_and_wrapper(client):
     assert data["provider"] == "smtp_relay" or data["provider"] == "graph_send_only" or data["status"] == "sent"
 
     # ensure wrapper applied from config/email/wrapper.md
-    assert "ticmymail Part‑2 service" in data["message"]["body"]
-    assert "Current state" in data["message"]["body"]
+    assert "Classification: CONFIDENTIAL" in data["message"]["body"]
+    assert "Footer" in data["message"]["body"]
+    assert "Status: ok" in data["message"]["body"]
 
 
 def test_servicenow_create_and_comment(client):
@@ -259,3 +368,59 @@ def test_version_contains_config_versions(client, config_loader):
     assert data["app_config_version"] == "v1"
     assert data["schema_version"] == "v1"
     assert data["dedupe_rules_version"] == "v1"
+    assert "log_file" in data
+
+
+def test_demo_escalation_creates_jira_ticket(client):
+    """Demo: high-priority escalation payload is routed to Jira and returns a SIM- issue key."""
+    sample = json.loads((Path(__file__).parent / "email_payload_good.json").read_text(encoding="utf-8"))
+    factory = PayloadScenarioFactory(sample)
+    payload = factory.build_escalation_demo()
+
+    r = client.post("/v1/incidents/ingest", json=payload, headers={"Idempotency-Key": "demo-escalation-001"})
+
+    assert r.status_code == 200
+    data = r.json()
+    assert data["status"] == "accepted"
+    assert data["ticket_system"] == "jira"
+    assert data["jira_issue_key"].startswith("SIM-")
+    assert data["action"] == "create"
+    assert data["jira_request_fields"]["customfield_10101"] == "EMEA Market Risk"
+    assert data["jira_request_fields"]["customfield_10102"] == "ACME-ESC-001"
+    assert data["jira_request_fields"]["customfield_10120"] == "VaR"
+
+
+def test_demo_servicenow_routing_creates_sn_ticket(client):
+    """Demo: payload with target_system=servicenow is routed to ServiceNow, not Jira."""
+    sample = json.loads((Path(__file__).parent / "email_payload_good.json").read_text(encoding="utf-8"))
+    factory = PayloadScenarioFactory(sample)
+    payload = factory.build_servicenow_demo()
+
+    r = client.post("/v1/incidents/ingest", json=payload, headers={"Idempotency-Key": "demo-sn-001"})
+
+    assert r.status_code == 200
+    data = r.json()
+    assert data["status"] == "accepted"
+    assert data["ticket_system"] == "servicenow"
+    assert data["sn_sys_id"] is not None
+    assert data["action"] == "create"
+    assert data.get("jira_issue_key") is None
+
+
+def test_demo_limit_breach_custom_field_mapping(client):
+    """Demo: limit breach payload carries dept_name/external_ref/data_domain mapped to Jira custom fields."""
+    sample = json.loads((Path(__file__).parent / "email_payload_good.json").read_text(encoding="utf-8"))
+    factory = PayloadScenarioFactory(sample)
+    payload = factory.build_limit_breach_demo()
+
+    r = client.post("/v1/incidents/ingest", json=payload, headers={"Idempotency-Key": "demo-limit-001"})
+
+    assert r.status_code == 200
+    data = r.json()
+    assert data["status"] == "accepted"
+    assert data["ticket_system"] == "jira"
+    assert data["jira_issue_key"].startswith("SIM-")
+    fields = data["jira_request_fields"]
+    assert fields["customfield_10101"] == "Global Market Risk"
+    assert fields["customfield_10102"] == "ACME-LIM-2026-04"
+    assert fields["customfield_10120"] == "Limits"

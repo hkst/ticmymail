@@ -1,29 +1,38 @@
-from time import time
-from typing import Any, Dict, Optional
+from datetime import datetime
+from typing import Any, Dict, List, Optional
+import time
 
 from fastapi import APIRouter, Body, Header, HTTPException
 from pydantic import BaseModel, Field, ValidationError
 from tmm.config.loader import ConfigLoader
 from tmm.logger import log_event
+from tmm.service.errors import AppError
 from tmm.service.dedupe_engine import DedupeEngine, ADLSDedupeEngine
 from tmm.service.incident_service import IncidentService
 
 router = APIRouter()
+_SERVICE_CACHE: Dict[str, IncidentService] = {}
 
 
-def _create_service():
-    loader = ConfigLoader()
+def _create_service(loader: ConfigLoader):
     app_cfg = loader.app()
+    cache_key = f"{loader.root.resolve()}::{app_cfg.get('config_version', 'v1')}::{app_cfg.get('incident_backend', 'servicenow')}"
+    if app_cfg.get("hot_reload", {}).get("enabled", False):
+        _SERVICE_CACHE.pop(cache_key, None)
+
+    if cache_key in _SERVICE_CACHE:
+        return _SERVICE_CACHE[cache_key]
+
+    dedupe_rules = loader.dedupe(app_cfg.get("config_version", "v1"))
     dedupe_backend = app_cfg.get("dedupe", {}).get("backend", "memory")
     if dedupe_backend == "adls":
         dedupe_engine = ADLSDedupeEngine(app_cfg)
     else:
-        dedupe_engine = DedupeEngine()
+        dedupe_engine = DedupeEngine(dedupe_rules)
 
-    return IncidentService(dedupe_engine)
-
-
-service = _create_service()
+    service = IncidentService(dedupe_engine, loader=loader)
+    _SERVICE_CACHE[cache_key] = service
+    return service
 
 
 class IngestPayload(BaseModel):
@@ -31,9 +40,15 @@ class IngestPayload(BaseModel):
     event_type: str = Field(..., example="new")
     message_id: str
     thread_id: str
+    reported_at: Optional[str] = None
+    ingested_at: Optional[str] = None
     subject: str
     body: str
     sender: str
+    attachments: Optional[List[Dict[str, Any]]] = None
+    priority_hint: Optional[str] = None
+    correlation_hints: Optional[List[str]] = None
+    target_system: Optional[str] = None
 
 
 def _unwrap_outlook_event(payload: Dict[str, Any]) -> Dict[str, Any]:
@@ -112,21 +127,26 @@ async def ingest(
     idem_key: str = Header(..., alias="Idempotency-Key"),
     correlation_id: Optional[str] = Header(None, alias="X-Correlation-Id"),
 ):
+    loader = ConfigLoader()
     try:
         normalized_payload = _build_ingest_payload(body)
+        loader.schema(normalized_payload.get("schema_version", "v1"))
+        loader.dedupe(normalized_payload.get("schema_version", "v1"))
         ingest_payload = IngestPayload(**normalized_payload)
+    except FileNotFoundError as exc:
+        raise AppError("RULESET_MISSING", str(exc), status_code=500)
     except ValidationError as exc:
-        raise HTTPException(status_code=422, detail=exc.errors())
+        raise AppError("INVALID_SCHEMA", "Payload validation failed", status_code=422, details=exc.errors())
 
-    loader = ConfigLoader()
     app_cfg = loader.app()
     if app_cfg.get("hot_reload", {}).get("enabled", False):
         loader.enable_hot_reload(True)
         loader.reload()
 
-    start = time()
+    service = _create_service(loader)
+    start = time.time()
     result = service.ingest(normalized_payload, idem_key)
-    duration_ms = (time() - start) * 1000
+    duration_ms = (time.time() - start) * 1000
 
     log_event(
         route="/v1/incidents/ingest",
@@ -137,6 +157,12 @@ async def ingest(
         schema_version=ingest_payload.schema_version,
         rules_version=app_cfg.get("config_version", "v1"),
         sn_sys_id=result.get("sn_sys_id"),
+        extra={
+            "ticket_system": result.get("ticket_system"),
+            "ticket_id": result.get("ticket_id"),
+            "jira_issue_key": result.get("jira_issue_key"),
+            "action": result.get("action"),
+        },
     )
 
     return result

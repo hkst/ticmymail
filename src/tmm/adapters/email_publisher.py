@@ -1,5 +1,6 @@
 import re
 import time
+import uuid
 from typing import Any, Dict
 
 from tmm.config.loader import ConfigLoader
@@ -26,12 +27,17 @@ class EmailPublisher:
             template_key = payload["template_key"]
             raw_template = self.loader.email_template(template_key)
             payload_vars = {k: v for k, v in payload.items() if isinstance(v, (str, int, float))}
+            payload_vars.update(payload.get("variables") or {})
             body = self._render_template(raw_template, payload_vars)
         else:
             body = payload.get("body", "") or ""
 
         wrapper = self.loader.email_wrapper()
-        return self._render_template(wrapper, {"body": body})
+        classification = payload.get("classification") or self.config.get("default_classification", "INTERNAL")
+        wrapped_body = body
+        if payload.get("footer_flag", True):
+            wrapped_body = self._render_template(wrapper, {"body": body})
+        return f"Classification: {classification}\n\n{wrapped_body}"
 
     def _build_outgoing(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         body = self._body_from_payload(payload)
@@ -79,6 +85,7 @@ class EmailPublisher:
                     "status": "sent",
                     "attempts": attempt,
                     "provider": response.get("channel"),
+                    "provider_msg_id": f"msg-{uuid.uuid4()}",
                     **response,
                 }
             except Exception as exc:

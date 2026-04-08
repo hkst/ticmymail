@@ -13,15 +13,45 @@ except ImportError:
 
 
 class DedupeEngine:
-    def __init__(self):
-        self._seen: Set[str] = set()
+    def __init__(self, rules: Optional[Dict[str, Any]] = None):
+        self.rules = rules or {}
+        self._seen: Dict[str, Dict[str, Any]] = {}
+
+    def _dedupe_fields(self) -> list[str]:
+        return list(self.rules.get("dedupe_fields", ["message_id", "thread_id", "subject", "body"]))
+
+    @staticmethod
+    def _normalize_value(value: Any) -> str:
+        if value is None:
+            return ""
+        if isinstance(value, list):
+            return "|".join(DedupeEngine._normalize_value(item) for item in value)
+        if isinstance(value, dict):
+            return json.dumps(value, sort_keys=True)
+        return " ".join(str(value).strip().lower().split())
+
+    def build_hash(self, key: str, payload: Dict[str, Any]) -> str:
+        normalized_fields = {
+            field: self._normalize_value(payload.get(field))
+            for field in self._dedupe_fields()
+        }
+        if not any(normalized_fields.values()):
+            normalized_fields["fallback_key"] = self._normalize_value(key)
+
+        normalized = json.dumps(normalized_fields, sort_keys=True)
+        return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+
+    def find_duplicate(self, key: str, payload: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        return self._seen.get(self.build_hash(key, payload))
+
+    def remember(self, key: str, payload: Dict[str, Any], result: Dict[str, Any]) -> None:
+        self._seen[self.build_hash(key, payload)] = dict(result)
 
     def is_duplicate(self, key: str, payload: Dict[str, Any]) -> bool:
-        normalized = f"{key}:{payload.get('subject','')}:{payload.get('body','')}"
-        hash_value = hashlib.sha256(normalized.encode("utf-8")).hexdigest()
-        if hash_value in self._seen:
+        duplicate = self.find_duplicate(key, payload)
+        if duplicate is not None:
             return True
-        self._seen.add(hash_value)
+        self.remember(key, payload, {"status": "accepted"})
         return False
 
 
@@ -58,6 +88,29 @@ class ADLSDedupeEngine:
                     raise ValueError("ADLS dedupe configuration must have connection_string")
                 service = BlobServiceClient.from_connection_string(self.connection_string)
             self._blob_client = service.get_blob_client(container=self.container_name, blob=self.blob_path)
+
+    def _dedupe_fields(self) -> list[str]:
+        return list(self.app_config.get("dedupe", {}).get("dedupe_fields", ["message_id", "thread_id", "subject", "body"]))
+
+    @staticmethod
+    def _normalize_value(value: Any) -> str:
+        if value is None:
+            return ""
+        if isinstance(value, list):
+            return "|".join(ADLSDedupeEngine._normalize_value(item) for item in value)
+        if isinstance(value, dict):
+            return json.dumps(value, sort_keys=True)
+        return " ".join(str(value).strip().lower().split())
+
+    def build_hash(self, key: str, payload: Dict[str, Any]) -> str:
+        normalized_fields = {
+            field: self._normalize_value(payload.get(field))
+            for field in self._dedupe_fields()
+        }
+        if not any(normalized_fields.values()):
+            normalized_fields["fallback_key"] = self._normalize_value(key)
+        normalized = json.dumps(normalized_fields, sort_keys=True)
+        return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
 
     def _now(self) -> float:
         return time.time()
@@ -96,21 +149,29 @@ class ADLSDedupeEngine:
         except ResourceNotFoundError:
             return None
 
-    def is_duplicate(self, key: str, payload: Dict[str, Any]) -> bool:
+    def find_duplicate(self, key: str, payload: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         self._refresh_cache()
-
-        normalized = f"{key}:{payload.get('subject','')}:{payload.get('body','')}"
-        hash_value = hashlib.sha256(normalized.encode("utf-8")).hexdigest()
-
+        hash_value = self.build_hash(key, payload)
         if hash_value in self._cache:
-            return True
+            return {"fingerprint": hash_value}
 
-        # Not seen locally, attempt to add with ADLS concurrency control
+        remote_set = self._load_remote_state()
+        if hash_value in remote_set:
+            self._cache = remote_set
+            self._cache_epoch = self._now()
+            return {"fingerprint": hash_value}
+
+        return None
+
+    def remember(self, key: str, payload: Dict[str, Any], result: Dict[str, Any]) -> bool:
+        hash_value = self.build_hash(key, payload)
+
         max_attempts = int(self.app_config.get("dedupe", {}).get("write_attempts", 3))
         for _ in range(max_attempts):
             remote_set = self._load_remote_state()
             if hash_value in remote_set:
-                self._cache.add(hash_value)
+                self._cache = remote_set
+                self._cache_epoch = self._now()
                 return True
 
             remote_set.add(hash_value)
@@ -122,16 +183,16 @@ class ADLSDedupeEngine:
                 self._cache_epoch = self._now()
                 return False
             except ResourceModifiedError:
-                # conflict; another writer beat us. retry from remote state
                 continue
 
-        # After retries, refresh and decide
         self._cache = self._load_remote_state()
-        is_dup = hash_value in self._cache
-        if not is_dup:
-            # if still missing, treat as not duplicate but don't generate a second SN without out-of-band handling
-            self._cache.add(hash_value)
-        return is_dup
+        self._cache_epoch = self._now()
+        return hash_value in self._cache
+
+    def is_duplicate(self, key: str, payload: Dict[str, Any]) -> bool:
+        if self.find_duplicate(key, payload) is not None:
+            return True
+        return bool(self.remember(key, payload, {"status": "accepted"}))
 
     def reconcile(self) -> None:
         now = self._now()

@@ -34,12 +34,10 @@
       "type": "string"
     },
     "reported_at": {
-      "type": "string",
-      "format": "date-time"
+      "type": "string"
     },
     "ingested_at": {
-      "type": "string",
-      "format": "date-time"
+      "type": "string"
     },
     "subject": {
       "type": "string"
@@ -58,6 +56,13 @@
     },
     "priority_hint": {
       "type": "string"
+    },
+    "target_system": {
+      "type": "string",
+      "enum": [
+        "jira",
+        "servicenow"
+      ]
     },
     "correlation_hints": {
       "type": "array",

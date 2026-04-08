@@ -1,0 +1,4 @@
+{"ts": 1775482031.4870884, "level": "INFO", "event": "run_start", "run_id": "20260406T132711", "log_file": "logs\\run-20260406T132711.log"}
+{"ts": 1775482032.7585673, "level": "ERROR", "event": "error", "run_id": "20260406T132711", "log_file": "logs\\run-20260406T132711.log", "message": "400 Client Error: Bad Request for url: https://hkst-mqm1ldo-demo.atlassian.net/rest/servicedeskapi/request", "error_code": "UNEXPECTED_ERROR", "details": {"path": "/v1/incidents/ingest"}}
+{"ts": 1775482032.7585673, "level": "ERROR", "event": "error", "run_id": "20260406T132711", "log_file": "logs\\run-20260406T132711.log", "message": "Phase-1 Jira runner failed", "error_code": "RUNNER_FAILED", "details": {"error": "400 Client Error: Bad Request for url: https://hkst-mqm1ldo-demo.atlassian.net/rest/servicedeskapi/request"}}
+{"ts": 1775482032.7609148, "level": "INFO", "event": "run_end", "run_id": "20260406T132711", "log_file": "logs\\run-20260406T132711.log"}
