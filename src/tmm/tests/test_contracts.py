@@ -1,0 +1,426 @@
+import os
+import json
+from pathlib import Path
+import pytest
+from fastapi.testclient import TestClient
+from tmm.api.http_app import app
+from tmm.api.routes_ingest import IngestPayload, _build_ingest_payload
+from tmm.config.loader import ConfigLoader
+from tmm.service.dedupe_engine import ADLSDedupeEngine, ResourceNotFoundError, ResourceModifiedError
+from tmm.service.payload_factory import PayloadScenarioFactory
+
+
+@pytest.fixture(scope="session")
+def config_loader(tmp_path_factory):
+    cfg = tmp_path_factory.mktemp("config")
+    (cfg / "app.json").write_text(
+        json.dumps(
+            {
+                "config_version": "v1",
+                "incident_backend": "servicenow",
+                "features": {"jira": True, "servicenow": True, "bigpanda": True, "email": True},
+                "dedupe": {"backend": "memory", "write_attempts": 2, "cache_ttl_seconds": 1, "reconcile_interval_seconds": 1},
+            }
+        ),
+        encoding="utf-8",
+    )
+    (cfg / "schema").mkdir(parents=True, exist_ok=True)
+    (cfg / "schema" / "v1").mkdir(parents=True, exist_ok=True)
+    (cfg / "schema" / "v1" / "schema.json").write_text(
+        json.dumps({"title": "tmm-provider-schema-v1"}), encoding="utf-8"
+    )
+    (cfg / "dedupe").mkdir(parents=True, exist_ok=True)
+    (cfg / "dedupe" / "v1").mkdir(parents=True, exist_ok=True)
+    (cfg / "dedupe" / "v1" / "dedupe.rules.json").write_text(
+        json.dumps({"dedupe_fields": ["subject", "body", "sender"]}), encoding="utf-8"
+    )
+    (cfg / "integrations").mkdir(parents=True, exist_ok=True)
+    (cfg / "integrations" / "servicenow.json").write_text(
+        json.dumps(
+            {
+                "instance_url": "https://example.service-now.com",
+                "mappings": {
+                    "incident": {
+                        "short_description": "{{subject}}",
+                        "description": "{{body}}",
+                        "caller_id": "{{sender}}",
+                    }
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    (cfg / "integrations" / "jira.json").write_text(
+        json.dumps(
+            {
+                "base_url": "https://example.atlassian.net",
+                "api_token": "dummy",
+                "email": "tester@example.com",
+                "service_desk_id": "1",
+                "request_type_id": "2",
+                "enabled": True,
+                "dry_run": True,
+                "raise_on_behalf_of": True,
+                "request_field_map": {
+                    "dept_name": "customfield_10101",
+                    "external_ref": "customfield_10102",
+                    "payload_json": "customfield_10103",
+                    "data_domain": "customfield_10120",
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    (cfg / "integrations" / "bigpanda.json").write_text(
+        json.dumps(
+            {
+                "api_url": "https://api.bigpanda.io/data/v2/alerts",
+                "api_token": "dummy",
+                "enable_correlation": True,
+            }
+        ),
+        encoding="utf-8",
+    )
+    (cfg / "email").mkdir(parents=True, exist_ok=True)
+    (cfg / "email" / "provider.json").write_text(
+        json.dumps({
+            "type": "smtp_relay",
+            "retry_policy": {"max_attempts": 2, "backoff_seconds": 0},
+            "smtp": {"host": "localhost", "port": 587},
+            "default_classification": "INTERNAL",
+        }),
+        encoding="utf-8",
+    )
+    (cfg / "email" / "wrapper.md").write_text("{{ body }}\n\n---\nFooter", encoding="utf-8")
+    (cfg / "email" / "templates").mkdir(parents=True, exist_ok=True)
+    (cfg / "email" / "templates" / "status.md").write_text("Status: {{body}}", encoding="utf-8")
+    (cfg / "nfr.json").write_text(json.dumps({"p95_ingest_ms": 200}), encoding="utf-8")
+    os.environ["TMM_CONFIG_ROOT"] = str(cfg)
+    yield ConfigLoader(str(cfg))
+    os.environ.pop("TMM_CONFIG_ROOT", None)
+
+
+@pytest.fixture
+def client(config_loader):
+    return TestClient(app)
+
+
+def test_ingest_idempotency(client):
+    payload = {
+        "schema_version": "v1",
+        "event_type": "new",
+        "message_id": "<mid1@example.com>",
+        "thread_id": "<tid@example.com>",
+        "subject": "test",
+        "body": "hello",
+        "sender": "alice@example.com",
+    }
+    headers = {"Idempotency-Key": "idem-key-123"}
+
+    r1 = client.post("/v1/incidents/ingest", json=payload, headers=headers)
+    r2 = client.post("/v1/incidents/ingest", json=payload, headers=headers)
+
+    assert r1.status_code == 200
+    assert r2.status_code == 200
+    assert r1.json()["sn_sys_id"] == r2.json()["sn_sys_id"]
+    assert r1.json()["status"] == r2.json()["status"]
+    assert r1.json()["action"] == "create"
+
+
+def test_ingest_payload_files_validate_correctly():
+    base_path = Path(__file__).parent
+    good_data = json.loads((base_path / "email_payload_good.json").read_text(encoding="utf-8"))
+    err_data = json.loads((base_path / "email_payload_err.json").read_text(encoding="utf-8"))
+
+    normalized_good = _build_ingest_payload(good_data)
+    good_payload = IngestPayload(**normalized_good)
+
+    assert good_payload.schema_version == "v1"
+    assert good_payload.event_type == "new"
+    assert good_payload.message_id == good_data["value"][0]["id"]
+    assert good_payload.thread_id == good_data["value"][0]["conversationId"]
+    assert good_payload.body == good_data["value"][0]["bodyPreview"]
+    assert good_payload.sender == good_data["value"][0]["from"]["emailAddress"]["address"]
+
+    normalized_err = _build_ingest_payload(err_data)
+    with pytest.raises(Exception):
+        IngestPayload(**normalized_err)
+
+
+def test_outlook_style_ingest_payload(client):
+    payload = {
+        "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+        "value": [
+            {
+                "@odata.etag": "W/\"CQAAABYAAADGZgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+                "id": "<mid1@example.com>",
+                "conversationId": "<tid@example.com>",
+                "createdDateTime": "2024-06-01T12:00:00Z.000Z",
+                "receivedDateTime": "2024-06-01T12:00:00Z.000Z",
+                "subject": "Test Event - data decerpencence in cpty-xyz report dated 12 march",
+                "bodyPreview": "This is a test event to check data decerpencence in cpty-xyz report dated 12 march.",
+                "from": {
+                    "emailAddress": {
+                        "name": "John Doe",
+                        "address": "john.doe@example.com"
+                    }
+                },
+                "importance": "normal",
+                "schema_version": "v1",
+                "event_type": "new"
+            }
+        ]
+    }
+    headers = {"Idempotency-Key": "idem-key-outlook"}
+
+    r = client.post("/v1/incidents/ingest", json=payload, headers=headers)
+
+    assert r.status_code == 200
+    assert r.json()["status"] == "accepted"
+
+
+def test_jira_target_system_ingest_returns_issue_key(client):
+    payload = {
+        "schema_version": "v1",
+        "event_type": "new",
+        "message_id": "<jira-mid@example.com>",
+        "thread_id": "<jira-thread@example.com>",
+        "subject": "Acme Market Risk Jira demo",
+        "body": "Acme Market Risk issue on Data, VaR analytics and reporting platform.",
+        "sender": "alice@example.com",
+        "target_system": "jira",
+        "dept_name": "Market Risk",
+        "external_ref": "ACME-EXT-42",
+        "payload_json": {"source": "phase1"},
+        "data_domain": "VaR",
+    }
+
+    r = client.post("/v1/incidents/ingest", json=payload, headers={"Idempotency-Key": "jira-idem-1"})
+
+    assert r.status_code == 200
+    data = r.json()
+    assert data["ticket_system"] == "jira"
+    assert data["jira_issue_key"].startswith("SIM-")
+    assert data["action"] == "create"
+    assert data["jira_request_fields"]["customfield_10101"] == "Market Risk"
+    assert data["jira_request_fields"]["customfield_10102"] == "ACME-EXT-42"
+    assert "phase1" in data["jira_request_fields"]["customfield_10103"]
+    assert data["jira_request_fields"]["customfield_10120"] == "VaR"
+
+
+def test_dedupe_demo_merges_duplicate_payloads(client):
+    sample = json.loads((Path(__file__).parent / "email_payload_good.json").read_text(encoding="utf-8"))
+    factory = PayloadScenarioFactory(sample)
+    duplicate_payloads = factory.build_duplicate_demo()
+
+    first = client.post("/v1/incidents/ingest", json=duplicate_payloads[0], headers={"Idempotency-Key": "dedupe-1"})
+    second = client.post("/v1/incidents/ingest", json=duplicate_payloads[1], headers={"Idempotency-Key": "dedupe-2"})
+
+    assert first.status_code == 200
+    assert second.status_code == 200
+    assert first.json()["status"] == "accepted"
+    assert second.json()["status"] == "duplicate"
+    assert second.json()["action"] == "merge"
+
+
+def test_email_threading_headers(client):
+    payload = {
+        "to": "bob@example.com",
+        "subject": "Hello",
+        "body": "Hi",
+        "message_id": "<msgid@example.com>",
+        "thread_id": "<thread@example.com>",
+    }
+    r = client.post("/v1/comm/email", json=payload)
+
+    assert r.status_code == 200
+    data = r.json()
+    assert data["in_reply_to"] == payload["message_id"]
+    assert data["references"] == payload["thread_id"]
+    assert data["sent"] is True
+    assert data["provider_msg_id"].startswith("msg-")
+
+
+def test_email_template_and_wrapper(client):
+    payload = {
+        "to": "bob@example.com",
+        "subject": "Hello",
+        "template_key": "status",
+        "body": "ok",
+        "message_id": "<msgid2@example.com>",
+        "thread_id": "<thread2@example.com>",
+        "classification": "CONFIDENTIAL",
+    }
+
+    r = client.post("/v1/comm/email", json=payload)
+    assert r.status_code == 200
+    data = r.json()
+    assert data["provider"] == "smtp_relay" or data["provider"] == "graph_send_only" or data["status"] == "sent"
+
+    # ensure wrapper applied from config/email/wrapper.md
+    assert "Classification: CONFIDENTIAL" in data["message"]["body"]
+    assert "Footer" in data["message"]["body"]
+    assert "Status: ok" in data["message"]["body"]
+
+
+def test_servicenow_create_and_comment(client):
+    payload = {"subject": "Test", "body": "Hello", "sender": "alice"}
+    r = client.post("/v1/integrations/servicenow/incidents", json=payload) 
+    assert r.status_code == 200
+    assert r.json()["operation"] == "create"
+
+    sys_id = "sys123"
+    r2 = client.post(f"/v1/integrations/servicenow/incidents/{sys_id}/comment", json={"comment": "Note"})
+    assert r2.status_code == 200
+    assert r2.json()["operation"] == "comment"
+
+
+def test_bigpanda_post_and_search_and_correlate(client):
+    payload = [
+        {"host": "h1", "service": "svc", "status": "critical", "description": "d", "tags": ["t1"]}
+    ]
+    r = client.post("/v1/integrations/bigpanda/events", json=payload)
+    assert r.status_code == 200
+    assert r.json()["ok"] is True
+
+    q = {"tags": ["t1"], "service": "svc"}
+    r2 = client.post("/v1/integrations/bigpanda/search", json=q)
+    assert r2.status_code == 200
+    assert r2.json()["ok"] is True
+
+    r3 = client.post("/v1/integrations/bigpanda/correlate", json={"alert_id": "sim-1", "correlation_ids": ["cid1"]})
+    assert r3.status_code == 200
+    assert r3.json()["operation"] == "attach_correlation"
+
+
+class FakeBlobClient:
+    def __init__(self):
+        self._data = b""
+        self.exists = False
+        self.etag = None
+        self.conflict_next_upload = False
+
+    def download_blob(self):
+        if not self.exists:
+            raise ResourceNotFoundError()
+
+        class FakeDownloader:
+            def __init__(self, data):
+                self._data = data
+
+            def readall(self):
+                return self._data
+
+        return FakeDownloader(self._data)
+
+    def get_blob_properties(self):
+        if not self.exists:
+            raise ResourceNotFoundError()
+        return type("P", (), {"etag": self.etag})()
+
+    def upload_blob(self, data, overwrite=True, if_match=None):
+        if self.conflict_next_upload:
+            self.conflict_next_upload = False
+            # Simulate another process writing the same new hash concurrently
+            remote_state = json.loads(data.decode("utf-8"))
+            if "hashes" in remote_state:
+                self._data = json.dumps({"hashes": list(remote_state["hashes"])}).encode("utf-8")
+                self.exists = True
+                self.etag = '"1"'
+            raise ResourceModifiedError("Simulated ResourceModifiedError")
+
+        if if_match is not None and self.exists and if_match != self.etag:
+            raise ResourceModifiedError("Simulated ResourceModifiedError")
+
+        self._data = data
+        self.exists = True
+        self.etag = '"1"'
+
+
+def test_adls_dedupe_engine_conflict_no_duplicate(tmp_path):
+    app_cfg = {
+        "dedupe": {"backend": "adls", "write_attempts": 2, "cache_ttl_seconds": 1, "reconcile_interval_seconds": 1},
+        "adls_dedupe": {"container": "dedupe", "blob_path": "dedupe-state.json", "connection_string": "fake"},
+    }
+    fake_blob = FakeBlobClient()
+    engine = ADLSDedupeEngine(app_cfg, blob_client=fake_blob)
+
+    payload = {"subject": "test", "body": "hello"}
+    # first call should write and return False (not duplicate)
+    assert engine.is_duplicate("k1", payload) is False
+
+    # second call same key should be duplicate
+    assert engine.is_duplicate("k1", payload) is True
+
+    # simulate lease/write conflict on a different key (commit happened in between)
+    fake_blob.conflict_next_upload = True
+    new_payload = {"subject": "test2", "body": "hello2"}
+    # because conflict triggers remote refresh and remote now contains this key, should become duplicate
+    result = engine.is_duplicate("k2", new_payload)
+    assert result is True
+
+
+def test_version_contains_config_versions(client, config_loader):
+    r = client.get("/v1/version")
+    assert r.status_code == 200
+    data = r.json()
+    assert data["service_version"] == "0.1.0"
+    assert data["app_config_version"] == "v1"
+    assert data["schema_version"] == "v1"
+    assert data["dedupe_rules_version"] == "v1"
+    assert "log_file" in data
+
+
+def test_demo_escalation_creates_jira_ticket(client):
+    """Demo: high-priority escalation payload is routed to Jira and returns a SIM- issue key."""
+    sample = json.loads((Path(__file__).parent / "email_payload_good.json").read_text(encoding="utf-8"))
+    factory = PayloadScenarioFactory(sample)
+    payload = factory.build_escalation_demo()
+
+    r = client.post("/v1/incidents/ingest", json=payload, headers={"Idempotency-Key": "demo-escalation-001"})
+
+    assert r.status_code == 200
+    data = r.json()
+    assert data["status"] == "accepted"
+    assert data["ticket_system"] == "jira"
+    assert data["jira_issue_key"].startswith("SIM-")
+    assert data["action"] == "create"
+    assert data["jira_request_fields"]["customfield_10101"] == "EMEA Market Risk"
+    assert data["jira_request_fields"]["customfield_10102"] == "ACME-ESC-001"
+    assert data["jira_request_fields"]["customfield_10120"] == "VaR"
+
+
+def test_demo_servicenow_routing_creates_sn_ticket(client):
+    """Demo: payload with target_system=servicenow is routed to ServiceNow, not Jira."""
+    sample = json.loads((Path(__file__).parent / "email_payload_good.json").read_text(encoding="utf-8"))
+    factory = PayloadScenarioFactory(sample)
+    payload = factory.build_servicenow_demo()
+
+    r = client.post("/v1/incidents/ingest", json=payload, headers={"Idempotency-Key": "demo-sn-001"})
+
+    assert r.status_code == 200
+    data = r.json()
+    assert data["status"] == "accepted"
+    assert data["ticket_system"] == "servicenow"
+    assert data["sn_sys_id"] is not None
+    assert data["action"] == "create"
+    assert data.get("jira_issue_key") is None
+
+
+def test_demo_limit_breach_custom_field_mapping(client):
+    """Demo: limit breach payload carries dept_name/external_ref/data_domain mapped to Jira custom fields."""
+    sample = json.loads((Path(__file__).parent / "email_payload_good.json").read_text(encoding="utf-8"))
+    factory = PayloadScenarioFactory(sample)
+    payload = factory.build_limit_breach_demo()
+
+    r = client.post("/v1/incidents/ingest", json=payload, headers={"Idempotency-Key": "demo-limit-001"})
+
+    assert r.status_code == 200
+    data = r.json()
+    assert data["status"] == "accepted"
+    assert data["ticket_system"] == "jira"
+    assert data["jira_issue_key"].startswith("SIM-")
+    fields = data["jira_request_fields"]
+    assert fields["customfield_10101"] == "Global Market Risk"
+    assert fields["customfield_10102"] == "ACME-LIM-2026-04"
+    assert fields["customfield_10120"] == "Limits"

@@ -1,0 +1,82 @@
+Email MCP + inbox monitoring: Doc‑4 prescribes an “Email MCP Server” and a “Concierge Agent” polling the inbox; this belongs to Part‑1 and must be removed from Part‑2. [4_tmm_tech...design_dev | Word]
+
+HT>> Agree and should be removed
+
+A2A lifecycle for drafting user emails: Any “agent writes back to users” is out of Part‑2; Part‑2 only consumes a JSON payload and works ServiceNow. [4_tmm_tech...design_dev | Word]
+HT>> Not correct, PArt2 should be able to send email to enduser for example to seek clarification or providing response to already resolved usecase ( AI agent will be in play). Similar issues can be identified and resolution worked out 
+for example:
+1. I am unable to login getting following error "Error011: Server down due to certificate issue"
+2. Works out scope, context, timing, open ongoing-issue, send standard response or workaround already shared for same application by IT team
+3) if similar closed resolved issue recently ( timeframe : tbc configurable ) provide a fix/workaround based on closed/resolved issue
+4) users asking for status of my ticket - a brief response based on ticket status and owner notes 
+
+Two‑way updates via email: Still TBD at program level; do not fix into Part‑2 now. [4_tmm_tech...design_dev | Word]
+HT>> See above answer 
+“BigPandas & Atlas Setup”: Unclear/undefined terms; looks unrelated to Part‑2’s core. Remove or define precisely (see §5). [4_tmm_tech...design_dev | Word]
+HT >> this is core part of Part2. System we developing will take email payload and work with Bigpanda and Service now atlas BUT setup is limited to get API endpoints of these two system. also understanding what else needed for our software to interact with them
+
+
+***
+
+
+Part‑2 provides a secure HTTP API for incident ingestion from Part‑1. It validates versioned payloads, applies config‑driven deduplication/merge, calls ServiceNow (ATLAS) via REST, and returns deterministic results with idempotency. It does not read mailboxes, call MS Teams, or send end‑user emails.
+``` [1](https://livereadingac-my.sharepoint.com/personal/fk827241_student_reading_ac_uk/_layouts/15/Doc.aspx?sourcedoc=%7B57A0613E-9970-48AD-BE3E-721D4A20EE9E%7D&file=4_tmm_technicallowleveldesign_dev.docx&action=default&mobileredirect=true)
+
+**6.2 API surface (skeleton)**
+```text
+POST /v1/incidents/ingest
+Headers: Authorization: Bearer <token> | Idempotency-Key: <key> | X-Corr-Id: <uuid>
+Body: { schema_version, event_type, message_id, thread_id, reported_at, subject, body, sender, attachments: [{name, size, type, uri?}], priority_hint?, correlation_hints: [...] }
+Responses:
+  200 { status: "merged"|"created"|"updated", sn_sys_id, correlation_id, action, now }
+  400 { code: "INVALID_SCHEMA", ... }
+  409 { code: "IDEMPOTENT_REPLAY", ... }
+  502 { code: "SN_TIMEOUT", ... }
+``` [1](https://livereadingac-my.sharepoint.com/personal/fk827241_student_reading_ac_uk/_layouts/15/Doc.aspx?sourcedoc=%7B57A0613E-9970-48AD-BE3E-721D4A20EE9E%7D&file=4_tmm_technicallowleveldesign_dev.docx&action=default&mobileredirect=true)
+
+**6.3 Config versioning**
+```text
+At startup the service loads:
+- /config/app.json (app settings, ServiceNow base URL)
+- /config/schema/<version>.json (payload schema)
+- /config/dedupe/<version>.json (rules)
+The service exposes GET /v1/version showing the active versions. Config change policy: restart or hot-reload via SIGHUP (decide one).
+``` [1](https://livereadingac-my.sharepoint.com/personal/fk827241_student_reading_ac_uk/_layouts/15/Doc.aspx?sourcedoc=%7B57A0613E-9970-48AD-BE3E-721D4A20EE9E%7D&file=4_tmm_technicallowleveldesign_dev.docx&action=default&mobileredirect=true)
+
+**6.4 Logging schema**
+```text
+{ ts, level, corr_id, idem_key, schema_version, rules_version, route: "ingest|sn.create|sn.update", duration_ms, outcome, sn_sys_id?, error_code?, details? }
+``` [1](https://livereadingac-my.sharepoint.com/personal/fk827241_student_reading_ac_uk/_layouts/15/Doc.aspx?sourcedoc=%7B57A0613E-9970-48AD-BE3E-721D4A20EE9E%7D&file=4_tmm_technicallowleveldesign_dev.docx&action=default&mobileredirect=true)
+
+**6.5 Acceptance criteria (Part‑2‑specific)**
+```text
+- Accepts payloads matching current schema_version; rejects others with INVALID_SCHEMA (400).
+- Processes a valid request end‑to‑end (validation→dedupe→ServiceNow call→response) in p95 ≤ 5s under N=XX RPS.
+- Applies idempotency: same Idempotency-Key returns 200 with same sn_sys_id and outcome without duplicate side effects.
+- Emits structured logs for 100% of requests with corr_id and idem_key.
+- Exposes /health (liveness/readiness) and /version.
+``` [1](https://livereadingac-my.sharepoint.com/personal/fk827241_student_reading_ac_uk/_layouts/15/Doc.aspx?sourcedoc=%7B57A0613E-9970-48AD-BE3E-721D4A20EE9E%7D&file=4_tmm_technicallowleveldesign_dev.docx&action=default&mobileredirect=true)
+
+---
+
+## 7) Open questions (to finalize the doc)
+1) **ServiceNow tenancy & auth**: confirm OAuth2 vs basic + where secrets live (Key Vault) and rotation cadence. [1](https://livereadingac-my.sharepoint.com/personal/fk827241_student_reading_ac_uk/_layouts/15/Doc.aspx?sourcedoc=%7B57A0613E-9970-48AD-BE3E-721D4A20EE9E%7D&file=4_tmm_technicallowleveldesign_dev.docx&action=default&mobileredirect=true)  
+2) **Attachment handling**: pass metadata only or signed URIs from Part‑1; max size if inline base64 is ever allowed. [1](https://livereadingac-my.sharepoint.com/personal/fk827241_student_reading_ac_uk/_layouts/15/Doc.aspx?sourcedoc=%7B57A0613E-9970-48AD-BE3E-721D4A20EE9E%7D&file=4_tmm_technicallowleveldesign_dev.docx&action=default&mobileredirect=true)  
+3) **Dedupe store**: purely in‑memory + rules, or persistent key/value (e.g., Redis/Azure Cache) for cross‑pod idempotency? [1](https://livereadingac-my.sharepoint.com/personal/fk827241_student_reading_ac_uk/_layouts/15/Doc.aspx?sourcedoc=%7B57A0613E-9970-48AD-BE3E-721D4A20EE9E%7D&file=4_tmm_technicallowleveldesign_dev.docx&action=default&mobileredirect=true)  
+4) **Retry policy** toward ServiceNow: max attempts, backoff, and which errors are retriable. [1](https://livereadingac-my.sharepoint.com/personal/fk827241_student_reading_ac_uk/_layouts/15/Doc.aspx?sourcedoc=%7B57A0613E-9970-48AD-BE3E-721D4A20EE9E%7D&file=4_tmm_technicallowleveldesign_dev.docx&action=default&mobileredirect=true)  
+5) **AKS justification**: target RPS and HA/zone requirements; if modest, App Service may suffice—state the rationale explicitly. [1](https://livereadingac-my.sharepoint.com/personal/fk827241_student_reading_ac_uk/_layouts/15/Doc.aspx?sourcedoc=%7B57A0613E-9970-48AD-BE3E-721D4A20EE9E%7D&file=4_tmm_technicallowleveldesign_dev.docx&action=default&mobileredirect=true)  
+6) **Dependency policy**: besides `pytest`, are `requests`/`httpx` permitted, or must we use stdlib `urllib`? Any ban list? [1](https://livereadingac-my.sharepoint.com/personal/fk827241_student_reading_ac_uk/_layouts/15/Doc.aspx?sourcedoc=%7B57A0613E-9970-48AD-BE3E-721D4A20EE9E%7D&file=4_tmm_technicallowleveldesign_dev.docx&action=default&mobileredirect=true)  
+7) **Config updates**: allow hot‑reload or mandate restart? Who owns change approval and rollback? [1](https://livereadingac-my.sharepoint.com/personal/fk827241_student_reading_ac_uk/_layouts/15/Doc.aspx?sourcedoc=%7B57A0613E-9970-48AD-BE3E-721D4A20EE9E%7D&file=4_tmm_technicallowleveldesign_dev.docx&action=default&mobileredirect=true)  
+8) **Logging destination**: stdout→Azure Monitor only, or also SIEM forwarding (CEF/JSON)? Retention window? [1](https://livereadingac-my.sharepoint.com/personal/fk827241_student_reading_ac_uk/_layouts/15/Doc.aspx?sourcedoc=%7B57A0613E-9970-48AD-BE3E-721D4A20EE9E%7D&file=4_tmm_technicallowleveldesign_dev.docx&action=default&mobileredirect=true)
+
+---
+
+## 8) Quick wins for clarity
+- Add a **“Part‑2 Only”** banner at the top of Doc‑4. [1](https://livereadingac-my.sharepoint.com/personal/fk827241_student_reading_ac_uk/_layouts/15/Doc.aspx?sourcedoc=%7B57A0613E-9970-48AD-BE3E-721D4A20EE9E%7D&file=4_tmm_technicallowleveldesign_dev.docx&action=default&mobileredirect=true)  
+- Move agentic MCP/A2A narrative to an **Appendix (Non‑Binding)** or delete for now. [1](https://livereadingac-my.sharepoint.com/personal/fk827241_student_reading_ac_uk/_layouts/15/Doc.aspx?sourcedoc=%7B57A0613E-9970-48AD-BE3E-721D4A20EE9E%7D&file=4_tmm_technicallowleveldesign_dev.docx&action=default&mobileredirect=true)  
+- Replace “BigPandas” with an explicit statement (either remove or define). [1](https://livereadingac-my.sharepoint.com/personal/fk827241_student_reading_ac_uk/_layouts/15/Doc.aspx?sourcedoc=%7B57A0613E-9970-48AD-BE3E-721D4A20EE9E%7D&file=4_tmm_technicallowleveldesign_dev.docx&action=default&mobileredirect=true)  
+- Add the API, payload minima, error model, and acceptance criteria snippets above into the main body. [1](https://livereadingac-my.sharepoint.com/personal/fk827241_student_reading_ac_uk/_layouts/15/Doc.aspx?sourcedoc=%7B57A0613E-9970-48AD-BE3E-721D4A20EE9E%7D&file=4_tmm_technicallowleveldesign_dev.docx&action=default&mobileredirect=true)
+
+---
+
+If you want, I can directly **mark up Doc‑4** with these redlines + insert the API/error/acceptance snippets so it’s contract‑ready for sign‑off.

@@ -1,0 +1,30 @@
+name: CD Main
+
+on:
+  workflow_dispatch:
+    inputs:
+      promote_image:
+        description: 'Image tag to promote (from develop build)'
+        required: true
+        default: ''
+
+jobs:
+  promote-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Manual approval (placeholder)
+        uses: peter-evans/slash-command-dispatch@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          reaction-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-type: pull-request
+          command: "/approve"
+      - name: Pull image from ACR (placeholder)
+        run: |
+          echo "pulling acr image ${ { github.event.inputs.promote_image } } (placeholder)"
+      - name: Deploy to AKS prod namespace (placeholder)
+        run: |
+          echo "kubectl apply -f manifests/prod --namespace=prod (placeholder)"
+      - name: Verify deployment (placeholder)
+        run: |
+          echo "kubectl rollout status deployment/ticmymail -n prod (placeholder)"

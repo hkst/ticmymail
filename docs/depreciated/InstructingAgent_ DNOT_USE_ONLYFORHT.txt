@@ -1,0 +1,198 @@
+Awesome—your repo and docs layout are exactly what Copilot Agents need. Here’s a **copy‑paste prompt script** you can use in **Copilot Chat (VS Code or github.com)** to kick off step‑by‑step setup and delivery for **Part‑2**.
+
+***
+
+## 0) Bootstrap guardrails (paste first)
+
+Use this as your **first** message so Copilot locks scope and constraints.
+
+```text
+SYSTEM / GUARDRAILS (Part‑2 only)
+
+- Source-agnostic intake. Do NOT read mailboxes. Do NOT add MS Teams.
+- Python ≥ 3.11, class-only architecture, src/ layout, PEP‑621. No Poetry.
+- Public APIs: 
+  POST /v1/incidents/ingest (idempotent), 
+  POST /v1/comm/email (send-only; requires message_id/thread_id), 
+  POST /v1/integrations/bigpanda/events, 
+  GET /v1/health, GET /v1/version.
+- Config drives behavior; never hardcode: /config/app.json, /config/schema/<ver>.json, /config/dedupe/<ver>.json, /config/integrations/servicenow.json, /config/integrations/bigpanda.json, /config/email/provider.json, /config/email/templates/*.md, /config/email/wrapper.md, /config/nfr.json.
+- Dedupe state: ADLS master + in-memory cache; concurrency via blob lease/ETag.
+- Outbound email: send-only (Graph or SMTP relay), set In-Reply-To/References using IDs from payload. No inbox read scopes.
+- Security: secrets in vault; image signing + SBOM; minimal deps; pytest for tests.
+- Branching: feature branches start with `ft_`, PRs into `develop`, then promote to `main`.
+```
+
+***
+
+## 1) Load context (paste next)
+
+Tell Copilot where the specs live so it “reads” them before acting.
+
+```text
+Read these files and keep them as the single source of truth:
+
+docs/1_tmm_problems_statement_enduser_ANNOTATED.docx
+docs/2_tmm_problemstatement_detailing_poview_ANNOTATED.docx
+docs/3_tmm_technicalscoping_by_solution_architect_ANNOTATED.docx
+docs/4_tmm_technicallowleveldesign_dev_ANNOTATED_v2.docx
+docs/agents/part2/agent-prompt.json
+docs/a2a/part2/personas.yaml
+
+Acknowledge when loaded. Then propose a 6–8 step plan with a Definition of Done for each step. Keep scope to Part‑2 only.
+```
+
+***
+
+## 2) Step 1 prompt — create feature branch + config stubs
+
+```text
+Create a feature branch named: ft_bootstrap_part2
+
+Generate starter config stubs (commit each with a clear message):
+- /config/app.json
+- /config/schema/v1/schema.json
+- /config/dedupe/v1/dedupe.rules.json
+- /config/integrations/servicenow.json
+- /config/integrations/bigpanda.json
+- /config/email/provider.json
+- /config/email/wrapper.md
+- /config/email/templates/clarification.md
+- /config/email/templates/status.md
+- /config/email/templates/workaround.md
+- /config/nfr.json
+
+Populate with safe defaults per Doc‑4 v2 (config-driven). Add TODOs where bank values are needed. Output the file trees and a short diff.
+```
+
+***
+
+## 3) Step 2 prompt — scaffold service + OpenAPI
+
+```text
+Scaffold a FastAPI app (class-based handlers) in src/:
+- src/tmm/api/http_app.py (ASGI entrypoint)
+- src/tmm/api/routes_ingest.py
+- src/tmm/api/routes_email.py
+- src/tmm/api/routes_bigpanda.py
+- src/tmm/api/routes_meta.py (health/version)
+- src/tmm/service/incident_service.py
+- src/tmm/service/dedupe_engine.py
+- src/tmm/adapters/servicenow_client.py
+- src/tmm/adapters/bigpanda_client.py
+- src/tmm/adapters/email_publisher.py
+- src/tmm/config/loader.py
+
+Add OpenAPI for all endpoints and wire minimal no-op implementations (return 501 / stub JSON). Commit with message “scaffold(api): Part‑2 service skeleton”.
+```
+
+***
+
+## 4) Step 3 prompt — contract tests & idempotency
+
+```text
+Add pytest contract tests under src/tmm/tests/ for:
+- /v1/incidents/ingest idempotency behavior (same Idempotency-Key returns same sn_sys_id/outcome).
+- /v1/comm/email threading headers set from message_id/thread_id.
+- /v1/version exposes active config versions.
+
+Include fixtures for config loading. Commit as “test(contracts): idempotency, email threading, version”.
+```
+
+***
+
+## 5) Step 4 prompt — config loaders + NFR exposure
+
+```text
+Implement src/tmm/config/loader.py:
+- Load JSON/YAML with schema-version awareness.
+- Support restart-only by default; include a hot-reload hook guarded by config flag.
+- Expose active versions in /v1/version via routes_meta.py.
+
+Wire logging (log4python) with fields: ts, level, corr_id, idem_key, schema_version, rules_version, route, duration_ms, outcome, sn_sys_id?, error_code?. Commit.
+```
+
+***
+
+## 6) Step 5 prompt — adapters (send‑only email, SN, BigPanda)
+
+```text
+Implement adapters to honor config only (no hardcoding):
+- EmailPublisher: provider switch graph_send_only|smtp_relay, mandatory footer/wrapper, markdown template rendering, In-Reply-To/References from payload IDs, retry/backoff from config.
+- ServiceNowClient: create/update/comment/attach endpoints driven by /config/integrations/servicenow.json; mandatory field mapping read from config.
+- BigPandaClient: operations (post note, find similar alerts by tags/service within window T, attach correlation ids); endpoints/auth/time window in /config/integrations/bigpanda.json.
+
+Create unit tests with mocks; no real network calls. Commit.
+```
+
+***
+
+## 7) Step 6 prompt — ADLS dedupe master
+
+```text
+Add ADLS-backed dedupe state:
+- Use azure-storage-blob; ADLS path from /config/app.json.
+- Implement blob lease/ETag concurrency for writes; maintain in-memory cache with TTL.
+- Provide a reconcile job (interval from config) to resync cache → ADLS.
+
+Add tests that simulate lease conflict and ensure no duplicate SN tickets when /ingest retried. Commit.
+```
+
+***
+
+## 8) Step 7 prompt — CI/CD
+
+```text
+Create GitHub Actions:
+- .github/workflows/ci.yml: lint (ruff or flake8), pytest, build wheel, build container, upload artifacts.
+- .github/workflows/cd-develop.yml: on push to develop → build+push image to ACR (placeholder) and deploy to dev AKS namespace (manifests or Helm stubs).
+- .github/workflows/cd-main.yml: manual approval gate → promote image and deploy to prod namespace.
+
+Add SBOM and image signing steps (placeholders ok). Commit.
+```
+
+***
+
+## 9) Step 8 prompt — PR and review checklist
+
+```text
+Open a PR from ft_bootstrap_part2 → develop with:
+- Summary of endpoints, config files, adapters, tests.
+- Checklist verifying scope (no mailbox read, no Teams), config paths, idempotency behavior, logging fields, and CI jobs green.
+
+Request my review.
+```
+
+***
+
+### Handy prompt you can always reuse
+
+> “Before coding, read the files I point to, summarize your plan in ≤10 bullets with a Definition of Done, ask up to 5 clarifying questions if needed, then proceed. After each step: run tests, show diffs, commit with a conventional message, and stop for review.”
+
+***
+
+## If Copilot throws git/path errors (Windows/PowerShell)
+
+*   **Branch exists:**  
+    `git switch chore/flatten-src-tmm` (no `-c`).  
+    Create a new one: `git switch -c ft_bootstrap_part2`.
+*   **git mv ‘source directory is empty’:**  
+    Create the missing path first (e.g., `src/tmm/tests/.keep`) or use `New-Item -ItemType Directory src/tmm/tests` and then add files—`git mv` only works on tracked files/dirs.
+
+***
+
+## Want me to kick‑start with config stubs automatically?
+
+Say **“generate stubs”** and I’ll drop populated defaults for:
+
+    /config/app.json
+    /config/schema/v1/schema.json
+    /config/dedupe/v1/dedupe.rules.json
+    /config/integrations/servicenow.json
+    /config/integrations/bigpanda.json
+    /config/email/provider.json
+    /config/email/wrapper.md
+    /config/email/templates/{clarification.md,status.md,workaround.md}
+    /config/nfr.json
+
+I can also add a minimal **OpenAPI** and the initial **FastAPI skeleton** in `src/` if you want to accelerate Step 2.

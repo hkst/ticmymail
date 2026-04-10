@@ -1,0 +1,1262 @@
+[
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-1@tmm.local>",
+        "conversationId": "<acme-thread-1@tmm.local>",
+        "event_type": "new",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: VaR analytics batch delay on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 1: var analytics batch delay.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 01",
+            "address": "marketrisk.user01@acmebank.example.com"
+          }
+        },
+        "importance": "high",
+        "attachments": [
+          {
+            "name": "evidence-01.txt",
+            "uri": "https://acme.example.com/evidence/01",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-01"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-2@tmm.local>",
+        "conversationId": "<acme-thread-2@tmm.local>",
+        "event_type": "new",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Reporting platform stale positions on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 2: reporting platform stale positions.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 02",
+            "address": "marketrisk.user02@acmebank.example.com"
+          }
+        },
+        "importance": "high",
+        "attachments": [
+          {
+            "name": "evidence-02.txt",
+            "uri": "https://acme.example.com/evidence/02",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-02"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-3@tmm.local>",
+        "conversationId": "<acme-thread-3@tmm.local>",
+        "event_type": "new",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Data reconciliation mismatch on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 3: data reconciliation mismatch.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 03",
+            "address": "marketrisk.user03@acmebank.example.com"
+          }
+        },
+        "importance": "normal",
+        "attachments": [
+          {
+            "name": "evidence-03.txt",
+            "uri": "https://acme.example.com/evidence/03",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-03"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-4@tmm.local>",
+        "conversationId": "<acme-thread-4@tmm.local>",
+        "event_type": "new",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Intraday risk cube refresh failed on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 4: intraday risk cube refresh failed.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 04",
+            "address": "marketrisk.user04@acmebank.example.com"
+          }
+        },
+        "importance": "high",
+        "attachments": [
+          {
+            "name": "evidence-04.txt",
+            "uri": "https://acme.example.com/evidence/04",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-04"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-5@tmm.local>",
+        "conversationId": "<acme-thread-5@tmm.local>",
+        "event_type": "new",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Scenario results missing for EMEA on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 5: scenario results missing for emea.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 05",
+            "address": "marketrisk.user05@acmebank.example.com"
+          }
+        },
+        "importance": "normal",
+        "attachments": [
+          {
+            "name": "evidence-05.txt",
+            "uri": "https://acme.example.com/evidence/05",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-05"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-6@tmm.local>",
+        "conversationId": "<acme-thread-6@tmm.local>",
+        "event_type": "status",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Limit dashboard latency spike on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 6: limit dashboard latency spike.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 06",
+            "address": "marketrisk.user06@acmebank.example.com"
+          }
+        },
+        "importance": "normal",
+        "attachments": [
+          {
+            "name": "evidence-06.txt",
+            "uri": "https://acme.example.com/evidence/06",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-06"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-7@tmm.local>",
+        "conversationId": "<acme-thread-7@tmm.local>",
+        "event_type": "new",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: PnL attribution report not loading on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 7: pnl attribution report not loading.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 07",
+            "address": "marketrisk.user07@acmebank.example.com"
+          }
+        },
+        "importance": "high",
+        "attachments": [
+          {
+            "name": "evidence-07.txt",
+            "uri": "https://acme.example.com/evidence/07",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-07"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-8@tmm.local>",
+        "conversationId": "<acme-thread-8@tmm.local>",
+        "event_type": "reply",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Counterparty hierarchy feed incomplete on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 8: counterparty hierarchy feed incomplete.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 08",
+            "address": "marketrisk.user08@acmebank.example.com"
+          }
+        },
+        "importance": "normal",
+        "attachments": [
+          {
+            "name": "evidence-08.txt",
+            "uri": "https://acme.example.com/evidence/08",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-08"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-9@tmm.local>",
+        "conversationId": "<acme-thread-9@tmm.local>",
+        "event_type": "new",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Historical VaR extract mismatch on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 9: historical var extract mismatch.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 09",
+            "address": "marketrisk.user09@acmebank.example.com"
+          }
+        },
+        "importance": "normal",
+        "attachments": [
+          {
+            "name": "evidence-09.txt",
+            "uri": "https://acme.example.com/evidence/09",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-09"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-10@tmm.local>",
+        "conversationId": "<acme-thread-10@tmm.local>",
+        "event_type": "escalate",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Overnight risk pipeline timeout on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 10: overnight risk pipeline timeout.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 10",
+            "address": "marketrisk.user10@acmebank.example.com"
+          }
+        },
+        "importance": "high",
+        "attachments": [
+          {
+            "name": "evidence-10.txt",
+            "uri": "https://acme.example.com/evidence/10",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-10"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-11@tmm.local>",
+        "conversationId": "<acme-thread-11@tmm.local>",
+        "event_type": "new",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: VaR analytics batch delay on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 11: var analytics batch delay.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 11",
+            "address": "marketrisk.user11@acmebank.example.com"
+          }
+        },
+        "importance": "high",
+        "attachments": [
+          {
+            "name": "evidence-11.txt",
+            "uri": "https://acme.example.com/evidence/11",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-11"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-12@tmm.local>",
+        "conversationId": "<acme-thread-12@tmm.local>",
+        "event_type": "new",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Reporting platform stale positions on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 12: reporting platform stale positions.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 12",
+            "address": "marketrisk.user12@acmebank.example.com"
+          }
+        },
+        "importance": "high",
+        "attachments": [
+          {
+            "name": "evidence-12.txt",
+            "uri": "https://acme.example.com/evidence/12",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-12"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-13@tmm.local>",
+        "conversationId": "<acme-thread-13@tmm.local>",
+        "event_type": "new",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Data reconciliation mismatch on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 13: data reconciliation mismatch.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 13",
+            "address": "marketrisk.user13@acmebank.example.com"
+          }
+        },
+        "importance": "normal",
+        "attachments": [
+          {
+            "name": "evidence-13.txt",
+            "uri": "https://acme.example.com/evidence/13",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-13"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-14@tmm.local>",
+        "conversationId": "<acme-thread-14@tmm.local>",
+        "event_type": "new",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Intraday risk cube refresh failed on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 14: intraday risk cube refresh failed.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 14",
+            "address": "marketrisk.user14@acmebank.example.com"
+          }
+        },
+        "importance": "high",
+        "attachments": [
+          {
+            "name": "evidence-14.txt",
+            "uri": "https://acme.example.com/evidence/14",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-14"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-15@tmm.local>",
+        "conversationId": "<acme-thread-15@tmm.local>",
+        "event_type": "new",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Scenario results missing for EMEA on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 15: scenario results missing for emea.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 15",
+            "address": "marketrisk.user15@acmebank.example.com"
+          }
+        },
+        "importance": "normal",
+        "attachments": [
+          {
+            "name": "evidence-15.txt",
+            "uri": "https://acme.example.com/evidence/15",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-15"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-16@tmm.local>",
+        "conversationId": "<acme-thread-16@tmm.local>",
+        "event_type": "status",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Limit dashboard latency spike on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 16: limit dashboard latency spike.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 16",
+            "address": "marketrisk.user16@acmebank.example.com"
+          }
+        },
+        "importance": "normal",
+        "attachments": [
+          {
+            "name": "evidence-16.txt",
+            "uri": "https://acme.example.com/evidence/16",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-16"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-17@tmm.local>",
+        "conversationId": "<acme-thread-17@tmm.local>",
+        "event_type": "new",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: PnL attribution report not loading on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 17: pnl attribution report not loading.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 17",
+            "address": "marketrisk.user17@acmebank.example.com"
+          }
+        },
+        "importance": "high",
+        "attachments": [
+          {
+            "name": "evidence-17.txt",
+            "uri": "https://acme.example.com/evidence/17",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-17"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-18@tmm.local>",
+        "conversationId": "<acme-thread-18@tmm.local>",
+        "event_type": "reply",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Counterparty hierarchy feed incomplete on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 18: counterparty hierarchy feed incomplete.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 18",
+            "address": "marketrisk.user18@acmebank.example.com"
+          }
+        },
+        "importance": "normal",
+        "attachments": [
+          {
+            "name": "evidence-18.txt",
+            "uri": "https://acme.example.com/evidence/18",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-18"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-19@tmm.local>",
+        "conversationId": "<acme-thread-19@tmm.local>",
+        "event_type": "new",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Historical VaR extract mismatch on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 19: historical var extract mismatch.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 19",
+            "address": "marketrisk.user19@acmebank.example.com"
+          }
+        },
+        "importance": "normal",
+        "attachments": [
+          {
+            "name": "evidence-19.txt",
+            "uri": "https://acme.example.com/evidence/19",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-19"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-20@tmm.local>",
+        "conversationId": "<acme-thread-20@tmm.local>",
+        "event_type": "escalate",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Overnight risk pipeline timeout on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 20: overnight risk pipeline timeout.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 20",
+            "address": "marketrisk.user20@acmebank.example.com"
+          }
+        },
+        "importance": "high",
+        "attachments": [
+          {
+            "name": "evidence-20.txt",
+            "uri": "https://acme.example.com/evidence/20",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-20"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-21@tmm.local>",
+        "conversationId": "<acme-thread-21@tmm.local>",
+        "event_type": "new",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: VaR analytics batch delay on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 21: var analytics batch delay.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 21",
+            "address": "marketrisk.user21@acmebank.example.com"
+          }
+        },
+        "importance": "high",
+        "attachments": [
+          {
+            "name": "evidence-21.txt",
+            "uri": "https://acme.example.com/evidence/21",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-21"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-22@tmm.local>",
+        "conversationId": "<acme-thread-22@tmm.local>",
+        "event_type": "new",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Reporting platform stale positions on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 22: reporting platform stale positions.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 22",
+            "address": "marketrisk.user22@acmebank.example.com"
+          }
+        },
+        "importance": "high",
+        "attachments": [
+          {
+            "name": "evidence-22.txt",
+            "uri": "https://acme.example.com/evidence/22",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-22"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-23@tmm.local>",
+        "conversationId": "<acme-thread-23@tmm.local>",
+        "event_type": "new",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Data reconciliation mismatch on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 23: data reconciliation mismatch.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 23",
+            "address": "marketrisk.user23@acmebank.example.com"
+          }
+        },
+        "importance": "normal",
+        "attachments": [
+          {
+            "name": "evidence-23.txt",
+            "uri": "https://acme.example.com/evidence/23",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-23"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-24@tmm.local>",
+        "conversationId": "<acme-thread-24@tmm.local>",
+        "event_type": "new",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Intraday risk cube refresh failed on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 24: intraday risk cube refresh failed.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 24",
+            "address": "marketrisk.user24@acmebank.example.com"
+          }
+        },
+        "importance": "high",
+        "attachments": [
+          {
+            "name": "evidence-24.txt",
+            "uri": "https://acme.example.com/evidence/24",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-24"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-25@tmm.local>",
+        "conversationId": "<acme-thread-25@tmm.local>",
+        "event_type": "new",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Scenario results missing for EMEA on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 25: scenario results missing for emea.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 25",
+            "address": "marketrisk.user25@acmebank.example.com"
+          }
+        },
+        "importance": "normal",
+        "attachments": [
+          {
+            "name": "evidence-25.txt",
+            "uri": "https://acme.example.com/evidence/25",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-25"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-26@tmm.local>",
+        "conversationId": "<acme-thread-26@tmm.local>",
+        "event_type": "status",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Limit dashboard latency spike on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 26: limit dashboard latency spike.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 26",
+            "address": "marketrisk.user26@acmebank.example.com"
+          }
+        },
+        "importance": "normal",
+        "attachments": [
+          {
+            "name": "evidence-26.txt",
+            "uri": "https://acme.example.com/evidence/26",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-26"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-27@tmm.local>",
+        "conversationId": "<acme-thread-27@tmm.local>",
+        "event_type": "new",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: PnL attribution report not loading on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 27: pnl attribution report not loading.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 27",
+            "address": "marketrisk.user27@acmebank.example.com"
+          }
+        },
+        "importance": "high",
+        "attachments": [
+          {
+            "name": "evidence-27.txt",
+            "uri": "https://acme.example.com/evidence/27",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-27"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-28@tmm.local>",
+        "conversationId": "<acme-thread-28@tmm.local>",
+        "event_type": "reply",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Counterparty hierarchy feed incomplete on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 28: counterparty hierarchy feed incomplete.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 28",
+            "address": "marketrisk.user28@acmebank.example.com"
+          }
+        },
+        "importance": "normal",
+        "attachments": [
+          {
+            "name": "evidence-28.txt",
+            "uri": "https://acme.example.com/evidence/28",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-28"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-29@tmm.local>",
+        "conversationId": "<acme-thread-29@tmm.local>",
+        "event_type": "new",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Historical VaR extract mismatch on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 29: historical var extract mismatch.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 29",
+            "address": "marketrisk.user29@acmebank.example.com"
+          }
+        },
+        "importance": "normal",
+        "attachments": [
+          {
+            "name": "evidence-29.txt",
+            "uri": "https://acme.example.com/evidence/29",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-29"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  },
+  {
+    "schema_version": "v1",
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
+    "value": [
+      {
+        "@odata.etag": "W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+        "id": "<acme-market-risk-30@tmm.local>",
+        "conversationId": "<acme-thread-30@tmm.local>",
+        "event_type": "escalate",
+        "createdDateTime": "2026-04-06T09:19:00Z.000Z",
+        "lastModifiedDateTime": "2026-04-06T09:17:00Z.000Z",
+        "receivedDateTime": "2026-04-06T09:20:00Z.000Z",
+        "changeKey": "CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+        "subject": "Acme Market Risk: Overnight risk pipeline timeout on Data, VaR analytics and reporting platform",
+        "bodyPreview": "Business is investment bank Acme and market risk division users are raising issues with Data, VaR analytics and reporting platform. Scenario 30: overnight risk pipeline timeout.",
+        "from": {
+          "emailAddress": {
+            "name": "Acme User 30",
+            "address": "marketrisk.user30@acmebank.example.com"
+          }
+        },
+        "importance": "high",
+        "attachments": [
+          {
+            "name": "evidence-30.txt",
+            "uri": "https://acme.example.com/evidence/30",
+            "contentType": "text/plain"
+          }
+        ],
+        "correlation_hints": [
+          "Acme",
+          "MarketRisk",
+          "DataPlatform",
+          "scenario-30"
+        ],
+        "business": "Acme Investment Bank",
+        "division": "Market Risk",
+        "platform": "Data, VaR analytics and reporting platform",
+        "target_system": "jira"
+      }
+    ]
+  }
+]

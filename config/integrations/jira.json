@@ -1,0 +1,17 @@
+{
+  "base_url": "https://dummy_base_url.atlassian.net",
+  "api_token": "dummy_api_token",
+  "email": "dummy_email",
+  "service_desk_id": "2",
+  "request_type_id": "9",
+  "enabled": true,
+  "raise_on_behalf_of": true,
+  "include_priority": false,
+  "request_field_map": {
+    "dept_name": "customfield_10101",
+    "external_ref": "customfield_10102",
+    "payload_json": "customfield_10103",
+    "data_domain": "customfield_10120"
+  },
+  "date_fields": []
+}

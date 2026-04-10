@@ -1,0 +1,28 @@
+[project]
+name = "ticmymail"
+version = "0.1.0"
+description = "Incident ingestion + email + BigPanda integration API"
+readme = "README.md"
+requires-python = ">=3.11"
+# ✅ ARM64‑safe dependencies (no Rust/Crypto/OpenSSL)
+#TODO need to remove ARM dependencies 
+dependencies = [
+  "fastapi==0.115.2",
+  "uvicorn>=0.24",
+  "pydantic==2.7.4",
+  "python-multipart>=0.0.6",
+  "PyYAML>=6.0"
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest>=8.4",
+  "httpx>=0.28",
+  "pytest-asyncio>=0.23",
+  "pytest-cov>=4.1",
+  "log4python>=0.6.1"
+]
+
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
