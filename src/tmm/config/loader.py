@@ -61,6 +61,9 @@ class ConfigLoader:
     def bigpanda(self) -> Dict[str, Any]:
         return self.load("integrations/bigpanda.json")
 
+    def jira(self) -> Dict[str, Any]:
+        return self.load("integrations/jira.json")
+
     def email(self) -> Dict[str, Any]:
         return self.load("email/provider.json")
 

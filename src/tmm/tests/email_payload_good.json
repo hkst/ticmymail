@@ -1,20 +1,20 @@
 {
     "schema_version": "v1",
     "@odata.context":"https://graph.microsoft.com/v1.0/$metadata#users('d9b8c8e7-5f3a-4c9b-9e5a-2f1e5b6c8d7e')/events",
-    "value":[{"@odata.etag":"W/\"CQAAABYAAADGZgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
-    "id":"AAMkADk3M2YyYjE0LTQ4ODQtNDg5ZC1iMjE5LWU4MzE3ZDEwYjAAYgAAA9sH8qL7n%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8AAAAAAEMAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
-    "conversationId":"<tid@example.com>",
+    "value":[{"@odata.etag":"W/\"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC\"",
+    "id":"AAMkADk3M2YyYjE0LTQ4ODQtNDg5ZC1idfdMjE5LWU4MzE3ZDEwYjAAYgAAA9sH8qL7n%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8AAAAAAEMAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+    "conversationId":"<tid@tmm.com>",
     "event_type":"new",
-    "createdDateTime":"2024-06-01T12:00:00Z.000Z",
-    "lastModifiedDateTime":"2024-06-01T12:00:a00Z.000Z",
-    "receivedDateTime":"2024-06-01T12:00:00Z.000Z",
-    "changeKey":"CQAAABYAAADGZgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
-    "subject":"Test Event - data decerpencence in cpty-xyz report dated 12 march",
-    "bodyPreview":"This is a test event to check data decerpencence in cpty-xyz report dated 12 march.",
+    "createdDateTime":"2026-04-06T09:19:00Z.000Z",
+    "lastModifiedDateTime":"2026-04-06T09:17:00Z.000Z",
+    "receivedDateTime":"2026-04-06T09:20:00Z.000Z",
+    "changeKey":"CQAAABYAAADGZsdfsgAAAAAAAAAAJgAAACZgAAAAAAABwAAACZgAAAAAAAAgAAAC",
+    "subject":"User name to be populated when ticket is created in jira",
+    "bodyPreview":"Generate a service request in Jira service desk queue - should have cusomter details and email so reply cn be sent.",
     "from":{
         "emailAddress":{
-            "name":"John Doe",
-            "address":"john.doe@example.com"
+            "name":"Henley Thakur",
+            "address":"h.k.s.thakur@student.henley.ac.uk"
             }
         },
     "importance":"normal"

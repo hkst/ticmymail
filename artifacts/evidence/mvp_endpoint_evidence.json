@@ -1,0 +1,108 @@
+{
+  "health": {
+    "status": "ok"
+  },
+  "version": {
+    "service_version": "0.1.0",
+    "app_config_version": "v1",
+    "schema_version": "v1",
+    "dedupe_rules_version": "v1",
+    "incident_backend": "servicenow",
+    "schema_config_title": "tmm-part2 incident ingest",
+    "dedupe_rules": [
+      "message_id",
+      "thread_id",
+      "subject",
+      "body"
+    ],
+    "nfr": {
+      "p95_ingest_ms": 200,
+      "p95_email_ms": 1000,
+      "error_rate_threshold_percent": 1,
+      "retry_limits": {
+        "servicenow": 3,
+        "bigpanda": 3,
+        "email": 2
+      },
+      "sla": {
+        "uptime_percent": 99.9
+      }
+    },
+    "log_file": "logs\\run-20260408T102700.log"
+  },
+  "ingest_first": {
+    "status": "accepted",
+    "action": "create",
+    "now": "2026-04-08T10:27:00.708459+00:00",
+    "idem_key": "evidence-idem-01",
+    "ticket_system": "servicenow",
+    "ticket_id": "9cf40b13-aaf6-4350-b624-8cd2652b859d",
+    "sn_sys_id": "9cf40b13-aaf6-4350-b624-8cd2652b859d",
+    "correlation_id": "ca51f7b5-3aed-4bf8-b4f6-efa568ceb869"
+  },
+  "ingest_second": {
+    "status": "accepted",
+    "action": "create",
+    "now": "2026-04-08T10:27:00.708459+00:00",
+    "idem_key": "evidence-idem-01",
+    "ticket_system": "servicenow",
+    "ticket_id": "9cf40b13-aaf6-4350-b624-8cd2652b859d",
+    "sn_sys_id": "9cf40b13-aaf6-4350-b624-8cd2652b859d",
+    "correlation_id": "ca51f7b5-3aed-4bf8-b4f6-efa568ceb869"
+  },
+  "email": {
+    "sent": true,
+    "provider_msg_id": "msg-21cb0153-8c81-4e53-afa3-b9ae9ad39607",
+    "in_reply_to": "<evidence-msg@example.com>",
+    "references": "<evidence-thread@example.com>",
+    "status": "sent",
+    "attempts": 1,
+    "provider": "smtp_relay",
+    "channel": "smtp_relay",
+    "message": {
+      "to": "evidence-recipient@example.com",
+      "subject": "Evidence email",
+      "body": "Classification: CONFIDENTIAL\n\nStatus update for incident: .\n\nCurrent state: .\n\n\n---\nThis message was sent by ticmymail Part\u20112 service.\n",
+      "in_reply_to": "<evidence-msg@example.com>",
+      "references": "<evidence-thread@example.com>"
+    }
+  },
+  "bigpanda_events": {
+    "ok": true,
+    "ref": "post_alert",
+    "results": [
+      {
+        "operation": "post_alert",
+        "api_url": "https://api.bigpanda.io/data/v2/alerts",
+        "payload": {
+          "host": "evidence-host",
+          "service": "evidence-svc",
+          "status": "critical",
+          "description": "evidence alert",
+          "tags": [
+            "evidence",
+            "mvp"
+          ],
+          "created_at": "2026-04-08T10:27:00.718249Z"
+        },
+        "access_token": "TODO_BIGPANDA_API_TOKEN",
+        "attempt": 1,
+        "status": "ok"
+      }
+    ]
+  },
+  "bigpanda_search": {
+    "ok": true,
+    "similar": [
+      {
+        "alert_id": "sim-0",
+        "host": "host0",
+        "service": "evidence-svc",
+        "tags": [
+          "evidence"
+        ],
+        "at": "2026-04-08T09:27:00.721700+00:00Z"
+      }
+    ]
+  }
+}

@@ -1,0 +1,661 @@
+{
+  "summary": {
+    "payload_count": 30,
+    "dedupe_demo_count": 6,
+    "accepted": 30,
+    "duplicates": 3,
+    "log_file": "logs\\run-20260406T132944.log"
+  },
+  "variation_results": [
+    {
+      "index": 1,
+      "subject": "Acme Market Risk: VaR analytics batch delay on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:29:46.438556+00:00",
+          "idem_key": "phase1-jira-01",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-47",
+          "ticket_id": "MD-47",
+          "correlation_id": "01bb3b16-a99d-4b46-9c6a-ebc0886d40e7",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 2,
+      "subject": "Acme Market Risk: Reporting platform stale positions on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:29:47.691621+00:00",
+          "idem_key": "phase1-jira-02",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-48",
+          "ticket_id": "MD-48",
+          "correlation_id": "183bbed9-cfa5-470d-b47d-1f2fb7d7006d",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 3,
+      "subject": "Acme Market Risk: Data reconciliation mismatch on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:29:49.005464+00:00",
+          "idem_key": "phase1-jira-03",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-49",
+          "ticket_id": "MD-49",
+          "correlation_id": "00309695-1bd7-48f9-b6e2-ca4823e0901c",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 4,
+      "subject": "Acme Market Risk: Intraday risk cube refresh failed on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:29:50.150933+00:00",
+          "idem_key": "phase1-jira-04",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-50",
+          "ticket_id": "MD-50",
+          "correlation_id": "694bff68-c9e1-47e0-8f83-f6e7fdb793a7",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 5,
+      "subject": "Acme Market Risk: Scenario results missing for EMEA on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:29:51.251567+00:00",
+          "idem_key": "phase1-jira-05",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-51",
+          "ticket_id": "MD-51",
+          "correlation_id": "0dcd14de-8662-4cb9-be15-f0a9c61b6e09",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 6,
+      "subject": "Acme Market Risk: Limit dashboard latency spike on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:29:52.423484+00:00",
+          "idem_key": "phase1-jira-06",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-52",
+          "ticket_id": "MD-52",
+          "correlation_id": "aa72781a-5bb1-4645-95ef-12a8cff1ee6f",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 7,
+      "subject": "Acme Market Risk: PnL attribution report not loading on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:29:53.608147+00:00",
+          "idem_key": "phase1-jira-07",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-53",
+          "ticket_id": "MD-53",
+          "correlation_id": "4e969816-f5aa-47b6-93b2-809068077b71",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 8,
+      "subject": "Acme Market Risk: Counterparty hierarchy feed incomplete on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:29:54.964771+00:00",
+          "idem_key": "phase1-jira-08",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-54",
+          "ticket_id": "MD-54",
+          "correlation_id": "a043c222-ea85-4701-b901-e84f0cb6f5dc",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 9,
+      "subject": "Acme Market Risk: Historical VaR extract mismatch on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:29:56.501513+00:00",
+          "idem_key": "phase1-jira-09",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-55",
+          "ticket_id": "MD-55",
+          "correlation_id": "8304ac34-7dff-4957-83ef-47eb5e1bb942",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 10,
+      "subject": "Acme Market Risk: Overnight risk pipeline timeout on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:29:57.728210+00:00",
+          "idem_key": "phase1-jira-10",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-56",
+          "ticket_id": "MD-56",
+          "correlation_id": "69f6fd45-15bd-4f55-ac74-b05061d0676a",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 11,
+      "subject": "Acme Market Risk: VaR analytics batch delay on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:29:58.835075+00:00",
+          "idem_key": "phase1-jira-11",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-57",
+          "ticket_id": "MD-57",
+          "correlation_id": "39cacb9c-e6ef-4051-a3fb-a9a83c1d05c7",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 12,
+      "subject": "Acme Market Risk: Reporting platform stale positions on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:00.155213+00:00",
+          "idem_key": "phase1-jira-12",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-58",
+          "ticket_id": "MD-58",
+          "correlation_id": "2fd25f9f-5d9b-4ad9-8fc2-e8cd92b630fd",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 13,
+      "subject": "Acme Market Risk: Data reconciliation mismatch on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:01.614983+00:00",
+          "idem_key": "phase1-jira-13",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-59",
+          "ticket_id": "MD-59",
+          "correlation_id": "fe6f8a03-58fa-4f09-902f-111dd6e8ee25",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 14,
+      "subject": "Acme Market Risk: Intraday risk cube refresh failed on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:03.056246+00:00",
+          "idem_key": "phase1-jira-14",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-60",
+          "ticket_id": "MD-60",
+          "correlation_id": "bdff4489-4cd7-43c5-bc63-2df99a0afca8",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 15,
+      "subject": "Acme Market Risk: Scenario results missing for EMEA on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:04.303052+00:00",
+          "idem_key": "phase1-jira-15",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-61",
+          "ticket_id": "MD-61",
+          "correlation_id": "10d32b3d-9c1a-4f41-b64f-522d941041f0",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 16,
+      "subject": "Acme Market Risk: Limit dashboard latency spike on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:05.505175+00:00",
+          "idem_key": "phase1-jira-16",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-62",
+          "ticket_id": "MD-62",
+          "correlation_id": "12877d43-891e-4c3e-af79-2e856a881a0e",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 17,
+      "subject": "Acme Market Risk: PnL attribution report not loading on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:06.768829+00:00",
+          "idem_key": "phase1-jira-17",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-63",
+          "ticket_id": "MD-63",
+          "correlation_id": "e2c10e27-fdab-4cc2-9eda-13d11ec3fe1e",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 18,
+      "subject": "Acme Market Risk: Counterparty hierarchy feed incomplete on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:07.962876+00:00",
+          "idem_key": "phase1-jira-18",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-64",
+          "ticket_id": "MD-64",
+          "correlation_id": "c224b782-f78d-4634-a201-e0fb728aa7b8",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 19,
+      "subject": "Acme Market Risk: Historical VaR extract mismatch on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:09.206354+00:00",
+          "idem_key": "phase1-jira-19",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-65",
+          "ticket_id": "MD-65",
+          "correlation_id": "fc22a79a-97f3-46cf-bd29-60d29faa4921",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 20,
+      "subject": "Acme Market Risk: Overnight risk pipeline timeout on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:10.530140+00:00",
+          "idem_key": "phase1-jira-20",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-66",
+          "ticket_id": "MD-66",
+          "correlation_id": "faaabaac-0b17-49b8-9536-2921b5955baa",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 21,
+      "subject": "Acme Market Risk: VaR analytics batch delay on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:11.954884+00:00",
+          "idem_key": "phase1-jira-21",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-67",
+          "ticket_id": "MD-67",
+          "correlation_id": "b8379195-2446-416b-b32e-b11a179c74ec",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 22,
+      "subject": "Acme Market Risk: Reporting platform stale positions on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:13.295369+00:00",
+          "idem_key": "phase1-jira-22",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-68",
+          "ticket_id": "MD-68",
+          "correlation_id": "8ef40224-877f-444f-926a-a988d1e04c8d",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 23,
+      "subject": "Acme Market Risk: Data reconciliation mismatch on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:14.624188+00:00",
+          "idem_key": "phase1-jira-23",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-69",
+          "ticket_id": "MD-69",
+          "correlation_id": "3c973cb8-113d-4cdb-8e55-80352127dd77",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 24,
+      "subject": "Acme Market Risk: Intraday risk cube refresh failed on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:15.753663+00:00",
+          "idem_key": "phase1-jira-24",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-70",
+          "ticket_id": "MD-70",
+          "correlation_id": "229b131c-7fa2-4c0b-9ac6-1b2f9ad9493f",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 25,
+      "subject": "Acme Market Risk: Scenario results missing for EMEA on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:17.025199+00:00",
+          "idem_key": "phase1-jira-25",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-71",
+          "ticket_id": "MD-71",
+          "correlation_id": "aee34e70-abc0-43ec-b92c-35b89ef71665",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 26,
+      "subject": "Acme Market Risk: Limit dashboard latency spike on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:18.219122+00:00",
+          "idem_key": "phase1-jira-26",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-72",
+          "ticket_id": "MD-72",
+          "correlation_id": "446d6ba3-4e14-44e0-b1ef-1a12cd3af586",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 27,
+      "subject": "Acme Market Risk: PnL attribution report not loading on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:19.370381+00:00",
+          "idem_key": "phase1-jira-27",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-73",
+          "ticket_id": "MD-73",
+          "correlation_id": "c5629257-b656-44ed-9e3b-aa60d8bdb7c4",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 28,
+      "subject": "Acme Market Risk: Counterparty hierarchy feed incomplete on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:20.595092+00:00",
+          "idem_key": "phase1-jira-28",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-74",
+          "ticket_id": "MD-74",
+          "correlation_id": "8f284ac7-4135-4746-80f7-7b2add5bc3f1",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 29,
+      "subject": "Acme Market Risk: Historical VaR extract mismatch on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:21.879467+00:00",
+          "idem_key": "phase1-jira-29",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-75",
+          "ticket_id": "MD-75",
+          "correlation_id": "f068d976-66f5-4cfe-b43c-b6efc271bbe6",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 30,
+      "subject": "Acme Market Risk: Overnight risk pipeline timeout on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:23.036535+00:00",
+          "idem_key": "phase1-jira-30",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-76",
+          "ticket_id": "MD-76",
+          "correlation_id": "95a20f52-94ae-42ce-8bbf-4a104b3ba3a7",
+          "sn_sys_id": null
+        }
+      }
+    }
+  ],
+  "duplicate_results": [
+    {
+      "index": 1,
+      "subject": "Acme Market Risk: VaR analytics batch delay on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "duplicate",
+          "action": "merge",
+          "now": "2026-04-06T13:30:23.041386+00:00",
+          "ticket_system": "jira",
+          "ticket_id": "MD-47",
+          "sn_sys_id": null,
+          "jira_issue_key": "MD-47",
+          "correlation_id": "01bb3b16-a99d-4b46-9c6a-ebc0886d40e7",
+          "idem_key": "phase1-dedupe-01"
+        }
+      }
+    },
+    {
+      "index": 2,
+      "subject": "Acme Market Risk: VaR analytics batch delay on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:24.371096+00:00",
+          "idem_key": "phase1-dedupe-02",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-77",
+          "ticket_id": "MD-77",
+          "correlation_id": "772c1dbe-f9f5-4b73-9c5d-c70dd7065009",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 3,
+      "subject": "Acme Market Risk: VaR analytics batch delay on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:25.581853+00:00",
+          "idem_key": "phase1-dedupe-03",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-78",
+          "ticket_id": "MD-78",
+          "correlation_id": "24f803d2-e89a-4c95-9334-1c8ef6c43bc6",
+          "sn_sys_id": null
+        }
+      }
+    },
+    {
+      "index": 4,
+      "subject": "Acme Market Risk: Reporting platform stale positions on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "duplicate",
+          "action": "merge",
+          "now": "2026-04-06T13:30:25.591013+00:00",
+          "ticket_system": "jira",
+          "ticket_id": "MD-48",
+          "sn_sys_id": null,
+          "jira_issue_key": "MD-48",
+          "correlation_id": "183bbed9-cfa5-470d-b47d-1f2fb7d7006d",
+          "idem_key": "phase1-dedupe-04"
+        }
+      }
+    },
+    {
+      "index": 5,
+      "subject": "Acme Market Risk: Data reconciliation mismatch on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "duplicate",
+          "action": "merge",
+          "now": "2026-04-06T13:30:25.597752+00:00",
+          "ticket_system": "jira",
+          "ticket_id": "MD-49",
+          "sn_sys_id": null,
+          "jira_issue_key": "MD-49",
+          "correlation_id": "00309695-1bd7-48f9-b6e2-ca4823e0901c",
+          "idem_key": "phase1-dedupe-05"
+        }
+      }
+    },
+    {
+      "index": 6,
+      "subject": "Acme Market Risk: Data reconciliation mismatch on Data, VaR analytics and reporting platform",
+      "result": {
+        "status_code": 200,
+        "body": {
+          "status": "accepted",
+          "action": "create",
+          "now": "2026-04-06T13:30:26.918627+00:00",
+          "idem_key": "phase1-dedupe-06",
+          "ticket_system": "jira",
+          "jira_issue_key": "MD-79",
+          "ticket_id": "MD-79",
+          "correlation_id": "41c82b65-557b-45c1-8e96-c9faebeaf56f",
+          "sn_sys_id": null
+        }
+      }
+    }
+  ]
+}

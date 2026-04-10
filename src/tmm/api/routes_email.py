@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from tmm.adapters.email_publisher import EmailPublisher
 from tmm.config.loader import ConfigLoader
 from tmm.logger import log_event
+from tmm.service.errors import AppError
 
 router = APIRouter()
 
@@ -16,6 +17,9 @@ class EmailPayload(BaseModel):
     body: str | None = None
     message_id: str
     thread_id: str
+    variables: dict | None = None
+    classification: str | None = None
+    footer_flag: bool | None = True
 
 
 @router.post("/comm/email", tags=["email"])
@@ -30,15 +34,14 @@ async def send_email(request: Request, payload: EmailPayload):
     publisher = EmailPublisher(email_cfg, loader=loader)
 
     if not payload.message_id or not payload.thread_id:
-        raise HTTPException(status_code=400, detail="message_id and thread_id are required")
+        raise AppError("INVALID_SCHEMA", "message_id and thread_id are required", status_code=400)
 
     start = time()
     try:
         result = publisher.send(payload.model_dump())
         outcome = "sent"
     except Exception as exc:
-        result = {"status": "error", "error": str(exc)}
-        outcome = "error"
+        raise AppError("EMAIL_SEND_FAILED", str(exc), status_code=502)
 
     duration_ms = (time() - start) * 1000
 
@@ -54,6 +57,8 @@ async def send_email(request: Request, payload: EmailPayload):
     )
 
     return {
+        "sent": result.get("status") == "sent",
+        "provider_msg_id": result.get("provider_msg_id"),
         "in_reply_to": payload.message_id,
         "references": payload.thread_id,
         **result,

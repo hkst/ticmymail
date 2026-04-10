@@ -4,13 +4,14 @@ version = "0.1.0"
 description = "Incident ingestion + email + BigPanda integration API"
 readme = "README.md"
 requires-python = ">=3.11"
+# ✅ ARM64‑safe dependencies (no Rust/Crypto/OpenSSL)
+#TODO need to remove ARM dependencies 
 dependencies = [
-  "fastapi>=0.115",
+  "fastapi==0.115.2",
   "uvicorn>=0.24",
-  "pydantic>=2.7",
+  "pydantic==2.7.4",
   "python-multipart>=0.0.6",
-  "PyYAML>=6.0",
-  "azure-storage-blob>=12.18"
+  "PyYAML>=6.0"
 ]
 
 [project.optional-dependencies]

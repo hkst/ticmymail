@@ -1,0 +1,22 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0
+rootdir: C:\Users\henley\Documents\Dev\mypy\ticmymail
+configfile: pyproject.toml
+plugins: anyio-4.13.0, asyncio-1.3.0, cov-7.1.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 14 items
+
+src\tmm\tests\test_contracts.py ..............                           [100%]
+
+============================== warnings summary ===============================
+.venv\Lib\site-packages\starlette\formparsers.py:12
+  C:\Users\henley\Documents\Dev\mypy\ticmymail\.venv\Lib\site-packages\starlette\formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.
+    import multipart
+
+.venv\Lib\site-packages\pydantic\fields.py:804
+.venv\Lib\site-packages\pydantic\fields.py:804
+  C:\Users\henley\Documents\Dev\mypy\ticmymail\.venv\Lib\site-packages\pydantic\fields.py:804: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.7/migration/
+    warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 14 passed, 3 warnings in 0.43s ========================
