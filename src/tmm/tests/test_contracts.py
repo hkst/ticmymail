@@ -54,8 +54,22 @@ def config_loader(tmp_path_factory):
         json.dumps(
             {
                 "base_url": "https://example.atlassian.net",
-                "api_token": "dummy",
-                "email": "tester@example.com",
+                "api_token": {
+                    "secret_ref": {
+                        "provider": "akv",
+                        "name": "jira-api-token",
+                        "required": False,
+                        "default": "dummy",
+                    }
+                },
+                "email": {
+                    "secret_ref": {
+                        "provider": "akv",
+                        "name": "jira-email",
+                        "required": False,
+                        "default": "tester@example.com",
+                    }
+                },
                 "service_desk_id": "1",
                 "request_type_id": "2",
                 "enabled": True,
@@ -75,7 +89,14 @@ def config_loader(tmp_path_factory):
         json.dumps(
             {
                 "api_url": "https://api.bigpanda.io/data/v2/alerts",
-                "api_token": "dummy",
+                "api_token": {
+                    "secret_ref": {
+                        "provider": "akv",
+                        "name": "bigpanda-api-token",
+                        "required": False,
+                        "default": "dummy",
+                    }
+                },
                 "enable_correlation": True,
             }
         ),

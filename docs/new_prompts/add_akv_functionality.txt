@@ -1,0 +1,159 @@
+I’ll quickly review your docs and current config-loading code to draft a precise Copilot-agent instruction that adds Azure Key Vault secret loading without changing core behavior.
+
+Read [](file:///c%3A/Users/henley/Documents/Dev/mypy/ticmymail/docs)
+
+Searched for regex `jira|api_token|Key Vault|AKV|secret|config|loader|environment variable` (`**/docs/**`), 200 results
+
+Searched for regex `api_token|jira.json|integrations|loader|os\.environ|dotenv|config` (`**/src/**`), 200 results
+
+I found the relevant hotspots; next I’ll read the key docs and loader/adapter files to produce a tailored implementation prompt that preserves your config-driven pattern.
+
+Read [](file:///c%3A/Users/henley/Documents/Dev/mypy/ticmymail/src/tmm/config/loader.py)
+
+Read [](file:///c%3A/Users/henley/Documents/Dev/mypy/ticmymail/src/tmm/adapters/jira_client.py)
+
+Read [](file:///c%3A/Users/henley/Documents/Dev/mypy/ticmymail/src/tmm/api/routes_jira.py)
+
+Read [](file:///c%3A/Users/henley/Documents/Dev/mypy/ticmymail/docs/agents/part2/agent-prompt.json)
+
+Read [](file:///c%3A/Users/henley/Documents/Dev/mypy/ticmymail/docs/a2a/part2/personas.yaml)
+
+I now have the architecture context; I’ll inspect the integration config files and tests so the instruction can specify backward-compatible AKV behavior and required test coverage.
+
+Read [](file:///c%3A/Users/henley/Documents/Dev/mypy/ticmymail/config/integrations/jira.json)
+
+Read [](file:///c%3A/Users/henley/Documents/Dev/mypy/ticmymail/config/integrations/bigpanda.json)
+
+Read [](file:///c%3A/Users/henley/Documents/Dev/mypy/ticmymail/config/integrations/servicenow.json)
+
+Read [](file:///c%3A/Users/henley/Documents/Dev/mypy/ticmymail/src/tmm/tests/test_contracts.py#1-1), lines 1 to 340
+
+Read [](file:///c%3A/Users/henley/Documents/Dev/mypy/ticmymail/requirements.txt)
+
+Read [](file:///c%3A/Users/henley/Documents/Dev/mypy/ticmymail/pyproject.toml)
+
+I’ve confirmed the loader and Jira path; I’ll read the service wiring next so the prompt preserves runtime behavior and adapter boundaries.
+
+Read [](file:///c%3A/Users/henley/Documents/Dev/mypy/ticmymail/src/tmm/api/routes_ingest.py)
+
+Read [](file:///c%3A/Users/henley/Documents/Dev/mypy/ticmymail/src/tmm/service/incident_service.py)
+
+Read [](file:///c%3A/Users/henley/Documents/Dev/mypy/ticmymail/src/tmm/adapters/servicenow_client.py)
+
+Read [](file:///c%3A/Users/henley/Documents/Dev/mypy/ticmymail/src/tmm/adapters/bigpanda_client.py)
+
+Great direction. Based on your docs and current code shape, the safest implementation path is to extend the existing config-loader pattern, not bypass it.
+
+What I used for grounding:
+- Central config pattern is in loader.py
+- Jira credentials are consumed through config in jira_client.py
+- Ingest flow depends on ConfigLoader and adapter wiring in incident_service.py and routes_ingest.py
+- Your architecture docs already require vault-managed secrets in agent-prompt.json and personas.yaml
+- Current secret placeholder config is in jira.json
+
+Use this as the exact Copilot Agent prompt:
+
+You are implementing secure secret resolution using Azure Key Vault in an existing config-driven Python service. Keep the current architecture and runtime behavior intact.
+
+Goal
+Replace plaintext secret usage from config files with runtime secret resolution from Azure Key Vault, while preserving all existing adapter/service interfaces and tests.
+
+Repository constraints to preserve
+1. Keep ConfigLoader as the single source of config access.
+2. Keep adapters receiving resolved config dictionaries (no adapter should call Key Vault directly).
+3. Keep current API behavior and response contracts unchanged.
+4. Keep local development working without Azure access by using environment-variable fallback.
+5. No hardcoded secrets in repo, code, tests, or logs.
+
+Current code touchpoints
+1. loader.py
+2. jira_client.py
+3. incident_service.py
+4. routes_jira.py
+5. test_contracts.py
+6. jira.json
+7. servicenow.json
+8. bigpanda.json
+
+Implementation requirements
+1. Add a secret provider abstraction under src/tmm/config:
+- Create SecretProvider interface and implementations:
+- EnvSecretProvider: resolves from environment variables.
+- AzureKeyVaultSecretProvider: resolves from Azure Key Vault using DefaultAzureCredential and SecretClient.
+- Composite/Fallback provider: tries AKV first when enabled, then env fallback.
+
+2. Extend ConfigLoader to resolve secret references after file load:
+- Keep existing load and cache behavior.
+- Add recursive secret resolution for values shaped as secret references.
+- Supported secret reference formats:
+- Object format: {"secret_ref":{"provider":"akv","name":"jira-api-token","required":true}}
+- Optional short string format: "akv://jira-api-token"
+- If required secret cannot be resolved, raise AppError-like configuration error with safe message (never include secret values).
+
+3. Preserve adapter contracts:
+- Jira client still expects config["api_token"] and config["email"] already resolved.
+- ServiceNow and BigPanda configs may also contain secret refs; resolve them the same way to keep consistent design.
+
+4. Add environment controls:
+- TMM_SECRETS_PROVIDER = akv | env | auto
+- TMM_AKV_VAULT_URL
+- TMM_AKV_USE_MANAGED_IDENTITY (optional behavior flag)
+- Keep TMM_CONFIG_ROOT behavior unchanged.
+
+5. Add dependencies (minimal):
+- azure-identity
+- azure-keyvault-secrets
+- Ensure compatibility with existing packaging setup and tests.
+
+6. Update config examples to remove plaintext secrets:
+- Keep jira.json with placeholders or secret_ref entries only.
+- Do the same pattern for other integration tokens/secrets where relevant.
+- Do not commit real values.
+
+7. Tests (must pass and maintain behavior):
+- Unit tests for secret resolution:
+- akv ref resolved by mocked AKV provider
+- env fallback works
+- required secret missing raises controlled error
+- non-secret values untouched
+- Existing contract tests in test_contracts.py must still pass with minimal fixture updates.
+- Add tests verifying no secret values appear in logged error messages.
+
+8. Documentation updates:
+- Add a short runbook section under docs explaining:
+- local dev with env vars
+- Azure deployment with managed identity + Key Vault access policy / RBAC
+- secret naming convention used by config secret_ref entries
+- rotation process with zero code changes
+
+Security and non-regression guardrails
+1. Do not log secret values.
+2. Do not change API routes, payload schema, or response contracts.
+3. Do not break dry_run Jira behavior.
+4. Do not remove existing hot-reload/config cache behavior.
+5. Keep design class-based and config-driven.
+
+Deliverables expected in one PR
+1. New secret provider module(s) under src/tmm/config
+2. Updated ConfigLoader with recursive secret resolution hook
+3. Updated integration config templates using secret_ref placeholders
+4. Tests updated/added
+5. Minimal docs for setup and operations
+6. PR summary including:
+- files changed
+- migration notes
+- rollback plan
+
+Validation commands to run and include output summary
+1. pytest for unit and contract tests
+2. a local smoke path showing service start with env-based secrets
+3. a mocked AKV path test proving secret_ref resolution
+
+Also add a short migration checklist in the PR description:
+1. Revoke and rotate previously exposed Jira token
+2. Set new token in Key Vault
+3. Set app identity permissions to Key Vault
+4. Remove any remaining local plaintext tokens
+5. Verify ingest flow for Jira target remains unchanged
+
+If you want, I can also draft a second prompt specifically for “AKV infrastructure and app identity wiring” (RBAC, Key Vault policy, deployment env vars) so you can run implementation and deployment as two clean PRs.

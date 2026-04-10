@@ -4,15 +4,72 @@ from pathlib import Path
 from typing import Any, Dict
 
 import yaml
+from tmm.config.secret_provider import SecretProvider, build_secret_provider_from_env
+
+
+class ConfigResolutionError(RuntimeError):
+    def __init__(self, code: str, message: str, status_code: int = 500):
+        super().__init__(message)
+        self.code = code
+        self.message = message
+        self.status_code = status_code
 
 
 class ConfigLoader:
-    def __init__(self, root: Path | str | None = None):
+    def __init__(self, root: Path | str | None = None, secret_provider: SecretProvider | None = None):
         if root is None:
             root = os.getenv("TMM_CONFIG_ROOT", "config")
         self.root = Path(root)
         self._cache: Dict[str, Any] = {}
         self._hot_reload = False
+        default_provider, env_provider = build_secret_provider_from_env()
+        self._secret_provider = secret_provider or default_provider
+        self._env_provider = env_provider
+
+    def _resolve_secret_value(self, ref: Dict[str, Any], source_path: str) -> str | None:
+        name = str(ref.get("name") or "").strip()
+        if not name:
+            raise ConfigResolutionError("SECRET_REFERENCE_INVALID", f"Invalid secret_ref in config path '{source_path}'", status_code=500)
+
+        required = bool(ref.get("required", True))
+        provider = str(ref.get("provider") or "auto").strip().lower()
+        default = ref.get("default")
+
+        if provider == "env":
+            value = self._env_provider.get_secret(ref.get("env") or name)
+        else:
+            value = self._secret_provider.get_secret(name)
+
+        if value in (None, "") and default is not None:
+            value = str(default)
+
+        if value in (None, "") and required:
+            raise ConfigResolutionError(
+                "SECRET_RESOLUTION_FAILED",
+                f"Required secret could not be resolved for '{name}' in '{source_path}'",
+                status_code=500,
+            )
+        return value
+
+    def _resolve_secrets_recursive(self, node: Any, source_path: str) -> Any:
+        if isinstance(node, dict):
+            if "secret_ref" in node and isinstance(node["secret_ref"], dict):
+                return self._resolve_secret_value(node["secret_ref"], source_path)
+            return {k: self._resolve_secrets_recursive(v, source_path) for k, v in node.items()}
+
+        if isinstance(node, list):
+            return [self._resolve_secrets_recursive(item, source_path) for item in node]
+
+        if isinstance(node, str):
+            text = node.strip()
+            if text.startswith("akv://"):
+                name = text[len("akv://") :].strip()
+                return self._resolve_secret_value({"provider": "akv", "name": name, "required": True}, source_path)
+            if text.startswith("env://"):
+                name = text[len("env://") :].strip()
+                return self._resolve_secret_value({"provider": "env", "name": name, "required": True}, source_path)
+
+        return node
 
     def enable_hot_reload(self, enabled: bool = True) -> None:
         self._hot_reload = enabled
@@ -40,6 +97,7 @@ class ConfigLoader:
 
         full = self.root / path
         loaded = self._load_file(full)
+        loaded = self._resolve_secrets_recursive(loaded, path)
 
         if not self._hot_reload:
             self._cache[path] = loaded
