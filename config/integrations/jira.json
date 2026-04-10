@@ -1,7 +1,21 @@
 {
   "base_url": "https://dummy_base_url.atlassian.net",
-  "api_token": "dummy_api_token",
-  "email": "dummy_email",
+  "api_token": {
+    "secret_ref": {
+      "provider": "akv",
+      "name": "jira-api-token",
+      "required": false,
+      "default": "dummy_api_token"
+    }
+  },
+  "email": {
+    "secret_ref": {
+      "provider": "akv",
+      "name": "jira-email",
+      "required": false,
+      "default": "dummy_email"
+    }
+  },
   "service_desk_id": "2",
   "request_type_id": "9",
   "enabled": true,

@@ -1,7 +1,14 @@
 {
   "instance_url": "https://example.service-now.com",
   "client_id": "TODO_CLIENT_ID",
-  "client_secret": "TODO_CLIENT_SECRET",
+  "client_secret": {
+    "secret_ref": {
+      "provider": "akv",
+      "name": "servicenow-client-secret",
+      "required": false,
+      "default": "TODO_CLIENT_SECRET"
+    }
+  },
   "scope": "useraccount.userinfo.read",
   "mappings": {
     "incident": {
